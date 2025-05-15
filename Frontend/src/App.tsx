@@ -1,40 +1,21 @@
-import "./App.css";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Login from "./pages/Login";
+import HomePage from "./pages/HomePage";
 
 function App() {
-  const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError("");
-      try {
-        const response = await axios.get("http://localhost:5000");
-        setData(response.data);
-        setIsLoading(false);
-      } catch (err) {
-        if (axios.isAxiosError(err)) {
-          setError(err.response?.data?.message || err.message);
-        } else {
-          setError("unexpected error occured");
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <p> Error: {error} </p>;
-
   return (
-    <>
-      <div>{data}</div>
-    </>
+    <div>
+      <Header />
+      <main>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<Login />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
   );
 }
 
