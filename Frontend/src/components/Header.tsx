@@ -7,7 +7,7 @@ interface HeaderProps {}
 const Header: React.FC<HeaderProps> = () => {
   return (
     <header className="bg-blue-600 text-white py-4 shadow-md">
-      <div className="container mx-auto flex items-center justify-between px-4">
+      <div className="container flex items-center justify-between px-10 mx-10">
         {/* Logo / Brand */}
         <Link
           to="/"
