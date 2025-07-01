@@ -1,4 +1,6 @@
+import axios from "axios";
 import { useState } from "react";
+const backendUrl = import.meta.env.backendUrl;
 
 const Signin = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +14,26 @@ const Signin = () => {
     setLoading(true);
 
     // create new account in database
-    // set local storage token and userId
+    try {
+      const response = await axios.post({ backendUrl } + "/user", {
+        email: email,
+        password: password,
+      });
+
+      // set local storage token and userId
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("userId", response.data.userId);
+      }
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err) && err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Failed to create account. Try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
