@@ -7,7 +7,7 @@ const Footer: React.FC<FooterProps> = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-800 text-white py-6 mt-8">
+    <footer className="bg-gray-800 text-white py-6 mt-8 w-full">
       <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
         {/* Left Section: Copyright and App Name */}
         <div className="text-center md:text-left mb-2 md:mb-0">
