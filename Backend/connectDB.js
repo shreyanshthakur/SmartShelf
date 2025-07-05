@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 // Replace with your MongoDB connection string
 const mongoUri =
-  "mongodb+srv://thakurshreyansh11:r8j8eubcX4VOdGby@cluster0.2m664.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+  "mongodb+srv://thakurshreyansh11:r8j8eubcX4VOdGby@cluster0.2m664.mongodb.net/smartShelf";
 
 const connectDB = async () => {
   try {

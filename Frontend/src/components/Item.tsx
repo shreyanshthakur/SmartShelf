@@ -1,29 +1,13 @@
-import React, { useEffect, useState } from "react";
-
 // Props: itemImage can be a string (URL) or a File/Blob, itemName and itemPrice are strings
 interface ItemProps {
-  itemImage: string | File | Blob;
   itemName: string;
   itemPrice: string;
 }
 
-const Item: React.FC<ItemProps> = ({ itemImage, itemName, itemPrice }) => {
-  const [imageUrl, setImageUrl] = useState<string>("");
-
-  useEffect(() => {
-    if (typeof itemImage === "string") {
-      setImageUrl(itemImage);
-    } else if (itemImage instanceof Blob) {
-      const url = URL.createObjectURL(itemImage);
-      setImageUrl(url);
-      return () => URL.revokeObjectURL(url);
-    }
-  }, [itemImage]);
-
+const Item: React.FC<ItemProps> = ({ itemName, itemPrice }) => {
   return (
     <div className="bg-white shadow-lg rounded-xl p-6 flex flex-col items-center justify-center transition-transform transform hover:scale-105 hover:shadow-2xl duration-200">
       <img
-        src={imageUrl}
         alt={itemName}
         className="w-36 h-36 object-cover mb-4 rounded-lg border border-gray-200 shadow-sm bg-gray-50"
       />
