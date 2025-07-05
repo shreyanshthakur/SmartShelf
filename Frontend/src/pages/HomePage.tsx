@@ -1,39 +1,35 @@
 import { Link } from "react-router-dom";
 import Item from "../components/Item";
+import axios from "axios";
+import { useEffect, useState } from "react";
+
+type ItemType = {
+  _id?: string;
+  itemName: string;
+  itemPrice: string;
+  // add other properties as needed
+};
 
 function HomePage() {
-  const items = [
-    {
-      itemImage: "../assets/samsungTv.png",
-      itemName: "Samsung OLED TV | 50 Ultra HD",
-      itemPrice: "Rs. 45000",
-    },
-    {
-      itemImage: "",
-      itemName: "Samsung OLED TV | 50 Ultra HD",
-      itemPrice: "Rs. 45000",
-    },
-    {
-      itemImage: "",
-      itemName: "Samsung OLED TV | 50 Ultra HD",
-      itemPrice: "Rs. 45000",
-    },
-    {
-      itemImage: "",
-      itemName: "Samsung OLED TV | 50 Ultra HD",
-      itemPrice: "Rs. 45000",
-    },
-    {
-      itemImage: "",
-      itemName: "Samsung OLED TV | 50 Ultra HD",
-      itemPrice: "Rs. 45000",
-    },
-    {
-      itemImage: "",
-      itemName: "Samsung OLED TV | 50 Ultra HD",
-      itemPrice: "Rs. 45000",
-    },
-  ];
+  const [items, setItems] = useState<ItemType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  // Fetch all items list to populate on HomePage
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/v1/itemList");
+        console.log("API resposne:", res.data);
+        setItems(res.data);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to fetch items.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchItems();
+  }, []);
 
   return (
     <div>
@@ -50,15 +46,20 @@ function HomePage() {
         <div className="text-center shadow-md rounded-lg px-8 pt-6 pb-8 w-full max-w-full min-h-screen h-50">
           <div className="w-full flex justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-4 w-full">
-              {items.map((item, index) => (
-                <Link key={index} to={`/itemDescriptionPage?itemId=${index}`}>
-                  <Item
-                    itemImage={item.itemImage}
-                    itemName={item.itemName}
-                    itemPrice={item.itemPrice}
-                  />
-                </Link>
-              ))}
+              {loading ? (
+                <div>Loading...</div>
+              ) : error ? (
+                <div>{error}</div>
+              ) : (
+                items.map((item, index) => (
+                  <Link
+                    key={item._id ?? index}
+                    to={`/itemDescriptionPage?itemId=${index}`}
+                  >
+                    <Item itemName={item.itemName} itemPrice={item.itemPrice} />
+                  </Link>
+                ))
+              )}
             </div>
           </div>
         </div>
