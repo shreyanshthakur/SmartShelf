@@ -47,13 +47,12 @@ function HomePage() {
         <div className="text-center shadow-md rounded-lg px-8 pt-6 pb-8 w-full max-w-full h-50">
           sliding images banner
         </div>
-        <div className="text-center shadow-md rounded-lg px-8 pt-6 pb-8 w-full max-w-full h-50">
+        <div className="text-center shadow-md rounded-lg px-8 pt-6 pb-8 w-full max-w-full min-h-screen h-50">
           <div className="w-full flex justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-4 w-full">
               {items.map((item, index) => (
-                <Link key={index} to={"/cart"}>
+                <Link key={index} to={`/itemDescriptionPage?itemId=${index}`}>
                   <Item
-                    key={index}
                     itemImage={item.itemImage}
                     itemName={item.itemName}
                     itemPrice={item.itemPrice}
