@@ -1,9 +1,10 @@
+import { Link } from "react-router-dom";
 import Item from "../components/Item";
 
 function HomePage() {
   const items = [
     {
-      itemImage: "",
+      itemImage: "../assets/samsungTv.png",
       itemName: "Samsung OLED TV | 50 Ultra HD",
       itemPrice: "Rs. 45000",
     },
@@ -50,12 +51,14 @@ function HomePage() {
           <div className="w-full flex justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-4 w-full">
               {items.map((item, index) => (
-                <Item
-                  key={index}
-                  itemImage={item.itemImage}
-                  itemName={item.itemName}
-                  itemPrice={item.itemPrice}
-                />
+                <Link key={index} to={"/cart"}>
+                  <Item
+                    key={index}
+                    itemImage={item.itemImage}
+                    itemName={item.itemName}
+                    itemPrice={item.itemPrice}
+                  />
+                </Link>
               ))}
             </div>
           </div>

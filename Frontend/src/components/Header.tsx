@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface HeaderProps {}
 
 const Header: React.FC<HeaderProps> = () => {
+  const [cartItemCount] = useState(0);
   return (
     <header className="bg-blue-600 text-white py-4 shadow-md">
       <div className="container flex items-center justify-between px-10 mx-10">
@@ -79,6 +80,13 @@ const Header: React.FC<HeaderProps> = () => {
           </button>
           {/* You'll likely want to conditionally render a mobile navigation menu here */}
         </div>
+
+        <Link
+          to="/cart"
+          className="text-xl bg-blue-500 hover:bg-blue-700 text-white py-2 rounded-xl p-2"
+        >
+          Cart {cartItemCount}
+        </Link>
 
         {/* Optional: User Profile/Actions */}
         <div className="hidden md:flex items-center space-x-2">
