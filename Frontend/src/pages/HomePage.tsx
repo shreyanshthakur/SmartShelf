@@ -19,7 +19,7 @@ function HomePage() {
     const fetchItems = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/v1/itemList");
-        console.log("API resposne:", res.data);
+        // console.log("API resposne:", res.data);
         setItems(res.data);
       } catch (err) {
         console.error(err);
@@ -54,7 +54,7 @@ function HomePage() {
                 items.map((item, index) => (
                   <Link
                     key={item._id ?? index}
-                    to={`/itemDescriptionPage?itemId=${index}`}
+                    to={`/itemDescriptionPage?itemId=${item._id}`}
                   >
                     <Item itemName={item.itemName} itemPrice={item.itemPrice} />
                   </Link>

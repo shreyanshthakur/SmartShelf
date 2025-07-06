@@ -27,6 +27,20 @@ app.get("/api/v1/itemList", async (req, res) => {
   }
 });
 
+app.get("/api/v1/itemList/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const item = await Item.findById(id);
+    if (!item) {
+      res.status(404).json({ error: "Item not found" });
+    }
+    res.json(item);
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ error: "unable to fetch the item" });
+  }
+});
+
 app.post("/api/v1/itemList", async (req, res) => {
   try {
     const data = req.body;
