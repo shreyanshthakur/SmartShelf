@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
 
 // Replace with your MongoDB connection string
-const mongoUri =
-  "mongodb+srv://thakurshreyansh11:r8j8eubcX4VOdGby@cluster0.2m664.mongodb.net/smartShelf";
+const connectionString = process.env.CONNECTION_STRING;
+const mongoUri = `${connectionString}/smartShelf`;
+console.log(mongoUri);
 
 const connectDB = async () => {
   try {
