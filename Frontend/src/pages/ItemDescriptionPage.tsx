@@ -56,14 +56,17 @@ export const ItemDescriptionPage = () => {
   return (
     <div className="min-h-screen min-w-screen bg-gray-100">
       {item ? (
-        <div className="container flex items-center flex-col justify-center bg-white min-h-screen min-w-screen">
-          <div className="">{item.itemName}</div>
-          <button className="mt-2 px-4 py-2 bg-indigo-500 text-white rounded-lg shadow hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50 transition">
-            Buy
-          </button>
-          <button className="mt-2 px-4 py-2 bg-indigo-500 text-white rounded-lg shadow hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50 transition">
-            Add to cart
-          </button>
+        <div className="flex flex-row">
+          <img className="min-h-max min-w-xl" alt="Image here"></img>
+          <div className="container flex items-center flex-col justify-center bg-white min-h-screen min-w-7">
+            <div className="text-2xl mb-2">{item.itemName}</div>
+            <button className="mt-2 px-4 py-2 bg-indigo-500 text-white rounded-lg shadow hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50 transition">
+              Buy
+            </button>
+            <button className="mt-2 px-4 py-2 bg-indigo-500 text-white rounded-lg shadow hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50 transition">
+              Add to cart
+            </button>
+          </div>
         </div>
       ) : (
         <div>No item found.</div>
