@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useState } from "react";
-const backendUrl = import.meta.env.backendUrl;
 
 const Signin = () => {
   const [email, setEmail] = useState("");
@@ -15,9 +14,9 @@ const Signin = () => {
 
     // create new account in database
     try {
-      const response = await axios.post({ backendUrl } + "/user", {
-        email: email,
-        password: password,
+      const response = await axios.post(`http://localhost:5000/api/v1/signup`, {
+        userEmail: email,
+        userPassword: password,
       });
 
       // set local storage token and userId

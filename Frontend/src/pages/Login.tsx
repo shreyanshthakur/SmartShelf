@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-interface AuthResponse {
-  token: string;
-  userId: string;
-}
+// interface AuthResponse {
+//   token: string;
+//   userId: string;
+// }
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -20,15 +20,20 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
 
     const loginData = {
-      email: email,
-      password: password,
+      userEmail: email,
+      userPassword: password,
     };
 
     try {
-      const response = await axios.post<AuthResponse>(
-        "/api/auth/login",
+      const response = await axios.post(
+        "http://localhost:5000/api/v1/login",
         loginData
       );
+      if (response) {
+        console.log("logged in successfully");
+      } else {
+        console.log("unable to login");
+      }
 
       if (response && response.data && response.data.token) {
         localStorage.setItem("token", response.data.token);

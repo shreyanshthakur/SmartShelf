@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const { connectDB } = require("./connectDB");
 const Item = require("./models/Item");
+const User = require("./models/User");
 const PORT = 5000;
 const cors = require("cors");
 app.use(cors());
@@ -50,6 +51,51 @@ app.post("/api/v1/itemList", async (req, res) => {
     res.status(201).json({ message: "Item received", data });
   } catch (err) {
     res.status(500).json({ error: "Failed to post item to database" });
+  }
+});
+
+app.post("/api/v1/signup", async (req, res) => {
+  console.log("Signup API Called");
+  try {
+    const data = req.body;
+    const userEmailAddress = data.userEmail;
+    const userFound = await User.find({ userEmailAddress });
+    if (userFound) {
+      console.log("Email id already exists! Please login");
+      res.status(429).json({ error: "Account already Exists" });
+    } else {
+      const newUser = new User(data);
+      console.log(data);
+      await newUser.save();
+      res.status(201).json({ message: "Account Successfully Created", data });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Failed to create user account" });
+  }
+});
+
+app.post("/api/v1/login", async (req, res) => {
+  try {
+    const data = req.body;
+    const userEmailAddress = data.userEmail;
+    console.log("UserEmailAddress: ", userEmailAddress);
+    const emailFound = await User.findOne({ userEmailAddress });
+    // check if mongodb returns whole object
+    console.log("emailfound: ", emailFound.data);
+    if (emailFound) {
+      // Password validation
+      console.log("Came inside");
+      const userPassword = req.body.userPassword;
+      console.log("userpassword: ", userPassword);
+      console.log("userPasswordFromDatabase", emailFound?.userPassword);
+      if (userPassword == emailFound?.userPassword) {
+        res.status(200).json({ message: "Login Successfull" });
+      }
+    } else {
+      res.status(422).json({ error: "Wrong Password" });
+    }
+  } catch (e) {
+    res.status(500).json({ error: "Failed to login" });
   }
 });
 
