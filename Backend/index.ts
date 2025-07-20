@@ -1,10 +1,11 @@
-const express = require("express");
-const app = express();
-const { connectDB } = require("./connectDB");
-const Item = require("./models/Item");
-const User = require("./models/User");
+import express from "express";
+import cors from "cors";
+import connectDB from "./connectDB";
+import Item from "./models/Item";
+import User from "./models/User";
+
 const PORT = 5000;
-const cors = require("cors");
+const app = express();
 app.use(cors());
 app.use(express.json());
 app.get("/", (req, res) => {
@@ -74,30 +75,30 @@ app.post("/api/v1/signup", async (req, res) => {
   }
 });
 
-app.post("/api/v1/login", async (req, res) => {
-  try {
-    const data = req.body;
-    const userEmailAddress = data.userEmail;
-    console.log("UserEmailAddress: ", userEmailAddress);
-    const emailFound = await User.findOne({ userEmailAddress });
-    // check if mongodb returns whole object
-    console.log("emailfound: ", emailFound.data);
-    if (emailFound) {
-      // Password validation
-      console.log("Came inside");
-      const userPassword = req.body.userPassword;
-      console.log("userpassword: ", userPassword);
-      console.log("userPasswordFromDatabase", emailFound?.userPassword);
-      if (userPassword == emailFound?.userPassword) {
-        res.status(200).json({ message: "Login Successfull" });
-      }
-    } else {
-      res.status(422).json({ error: "Wrong Password" });
-    }
-  } catch (e) {
-    res.status(500).json({ error: "Failed to login" });
-  }
-});
+// app.post("/api/v1/login", async (req, res) => {
+//   try {
+//     const data = req.body;
+//     const userEmailAddress = data.userEmail;
+//     console.log("UserEmailAddress: ", userEmailAddress);
+//     const emailFound = await User.findOne({ userEmailAddress });
+//     // check if mongodb returns whole object
+//     console.log("emailfound: ", emailFound.data);
+//     if (emailFound) {
+//       // Password validation
+//       console.log("Came inside");
+//       const userPassword = req.body.userPassword;
+//       console.log("userpassword: ", userPassword);
+//       console.log("userPasswordFromDatabase", emailFound?.userPassword);
+//       if (userPassword == emailFound?.userPassword) {
+//         res.status(200).json({ message: "Login Successfull" });
+//       }
+//     } else {
+//       res.status(422).json({ error: "Wrong Password" });
+//     }
+//   } catch (e) {
+//     res.status(500).json({ error: "Failed to login" });
+//   }
+// });
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
