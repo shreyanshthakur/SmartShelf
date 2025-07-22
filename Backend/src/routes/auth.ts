@@ -15,6 +15,6 @@ router.post("/login", loginController);
 // Protected routes (authentication required)
 router.post("/change-password", authenticateToken, changePasswordController);
 router.post("/logout", authenticateToken, logoutController);
-router.post("/me", authenticateToken, getCurrentUserController);
+router.get("/me", authenticateToken, getCurrentUserController);
 
 export default router;
