@@ -22,7 +22,7 @@ try {
 }
 
 // API Routes
-app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/", authRoutes);
 app.use("/api/v1", itemRoutes);
 
 app.listen(PORT, () => {
