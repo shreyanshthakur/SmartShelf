@@ -14,6 +14,7 @@ const Signin = () => {
 
     // create new account in database
     try {
+      console.log("[DEBUG] Calling the signup api");
       const response = await axios.post(`http://localhost:5000/api/v1/signup`, {
         userEmail: email,
         userPassword: password,
