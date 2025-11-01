@@ -4,6 +4,8 @@ import { useState } from "react";
 const Signin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,13 +16,18 @@ const Signin = () => {
 
     // create new account in database
     try {
+      console.log("[DEBUG] Calling the signup api");
       const response = await axios.post(`http://localhost:5000/api/v1/signup`, {
-        userEmail: email,
-        userPassword: password,
+        email: email,
+        password: password,
+        firstName: firstName,
+        lastName: lastName,
       });
-
-      // set local storage token and userId
-      if (response.data.token) {
+      if (response.data.status == true) {
+        console.log("[DEBUG] User creation successful", response.data);
+      }
+      if (response.data && response.data.token) {
+        // set local storage token and userId
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("userId", response.data.userId);
       }
@@ -43,6 +50,34 @@ const Signin = () => {
             Create a new account
           </h2>
           <form onSubmit={submitHandler}>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                First Name
+              </label>
+              <input
+                className="shadow appearance-none border rounded px-3 py-2 text-gray-700 w-full leading-tight focus:outline-none focus:shadow-outline"
+                type="text"
+                placeholder="Eg. Tom"
+                id="firstName"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Last Name
+              </label>
+              <input
+                className="shadow appearance-none border rounded px-3 py-2 text-gray-700 w-full leading-tight focus:outline-none focus:shadow-outline"
+                type="text"
+                placeholder="Eg. Cruise"
+                id="lastName"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+            </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 Email Address
