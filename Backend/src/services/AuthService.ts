@@ -21,6 +21,7 @@ export const register = async (userData: {
   lastName: string;
 }): Promise<AuthResult> => {
   try {
+    console.log("[DEBUG] Came inside register");
     const existingUser = await User.findOne({ email: userData.email });
     if (existingUser) {
       return {
@@ -28,11 +29,12 @@ export const register = async (userData: {
         message: "User with this email already exists",
       };
     }
-
+    console.log("[DEBUG] Not an existing user");
     // Create new user
     const newUser: IUser = new User(userData);
     await newUser.save();
-
+    console.log("[DEBUG] Creation done");
+    console.log("[DEBUG]", newUser._id.toString(), newUser.email);
     return {
       success: true,
       message: "User registered successfully",

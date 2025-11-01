@@ -18,14 +18,16 @@ const Signin = () => {
     try {
       console.log("[DEBUG] Calling the signup api");
       const response = await axios.post(`http://localhost:5000/api/v1/signup`, {
-        userEmail: email,
-        userPassword: password,
-        userFirstName: firstName,
-        userLastName: lastName,
+        email: email,
+        password: password,
+        firstName: firstName,
+        lastName: lastName,
       });
-
-      // set local storage token and userId
-      if (response.data.token) {
+      if (response.data.status == true) {
+        console.log("[DEBUG] User creation successful", response.data);
+      }
+      if (response.data && response.data.token) {
+        // set local storage token and userId
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("userId", response.data.userId);
       }
