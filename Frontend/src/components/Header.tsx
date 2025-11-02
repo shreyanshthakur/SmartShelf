@@ -1,11 +1,19 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
+import { logout } from "../features/userSlice";
+import type { RootState } from "../store";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface HeaderProps {}
 
 const Header: React.FC<HeaderProps> = () => {
   const [cartItemCount] = useState(0);
+  const { firstName, isLoggedIn } = useSelector(
+    (state: RootState) => state.user
+  ) as { firstName: string; isLoggedIn: boolean };
+  const dispatch = useDispatch();
+
   return (
     <header className="bg-blue-600 text-white py-4 shadow-md">
       <div className="container flex items-center justify-between px-10 mx-10">
@@ -88,26 +96,23 @@ const Header: React.FC<HeaderProps> = () => {
           Cart {cartItemCount}
         </Link>
 
-        {/* Optional: User Profile/Actions */}
-        <div className="hidden md:flex items-center space-x-2">
-          {/* Example: Display user name if logged in */}
-          {localStorage.getItem("token") && (
-            <span className="text-sm">Welcome, User</span>
-          )}
-          {/* Example: Logout button */}
-          {localStorage.getItem("token") && (
-            <button
-              onClick={() => {
-                localStorage.removeItem("token");
-                localStorage.removeItem("userId");
-                window.location.reload(); // Simple way to refresh
-              }}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded-full text-sm focus:outline-none focus:shadow-outline"
-            >
-              Logout
-            </button>
-          )}
-          {!localStorage.getItem("token") && (
+        {/* Profile Section */}
+        <div className="hidden md:flex items-center space-x-4">
+          {isLoggedIn ? (
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-blue-600 font-bold">
+                👤
+              </div>
+
+              <span className="text-sm font-semibold mr-20">{firstName}</span>
+              <button
+                onClick={() => dispatch(logout())}
+                className="bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-full text-sm"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
             <Link
               to="/login"
               className="bg-green-500 hover:bg-green-700 text-white font-semibold py-2 px-3 rounded-full text-sm focus:outline-none focus:shadow-outline"
