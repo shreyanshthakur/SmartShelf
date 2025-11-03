@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import { useDispatch } from "react-redux";
+import { setUser } from "../features/userSlice";
+
 // interface AuthResponse {
 //   token: string;
 //   userId: string;
@@ -13,6 +16,7 @@ const LoginPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const submitHandler = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -20,8 +24,8 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
 
     const loginData = {
-      userEmail: email,
-      userPassword: password,
+      email: email,
+      password: password,
     };
 
     try {
@@ -29,16 +33,18 @@ const LoginPage: React.FC = () => {
         "http://localhost:5000/api/v1/login",
         loginData
       );
-      if (response) {
-        console.log("logged in successfully");
-      } else {
-        console.log("unable to login");
-      }
-
+      console.log("response: ", response);
       if (response && response.data && response.data.token) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("userId", response.data.userId);
-        navigate("/dashboard"); // Redirect to dashboard after successful login
+        dispatch(
+          setUser({
+            firstName: response.data.firstName,
+            lastName: response.data.lastName,
+            email: response.data.email,
+          })
+        );
+        navigate("/"); // Redirect to dashboard after successful login
       } else {
         setErrorMessage("Login failed. Please check your credentials.");
       }
