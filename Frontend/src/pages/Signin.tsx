@@ -1,5 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { setUser } from "../features/userSlice";
 
 const Signin = () => {
   const [email, setEmail] = useState("");
@@ -8,6 +11,9 @@ const Signin = () => {
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault(); // to stop browser from loading the whole page on submit
@@ -25,6 +31,18 @@ const Signin = () => {
       });
       if (response.data.status == true) {
         console.log("[DEBUG] User creation successful", response.data);
+        dispatch(
+          setUser({
+            firstName: response.data.user.firstName,
+            lastName: response.data.user.lastName,
+            email: response.data.user.email,
+          })
+        );
+
+        // redirect to the homepage
+        navigate("/");
+      } else {
+        setError("Sign-in failed. Please check your credentials.");
       }
       if (response.data && response.data.token) {
         // set local storage token and userId
