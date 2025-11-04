@@ -54,6 +54,11 @@ router.post("/itemList", async (req, res) => {
   try {
     const data = req.body;
     const newItem = new Item(data);
+    await newItem.save();
+    res
+      .status(201)
+      .json({ message: "Item created successfully", item: newItem });
+  } catch (err) {
     res.status(500).json({ error: "Failed to post item to database" });
   }
 });
