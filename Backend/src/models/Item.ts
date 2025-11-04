@@ -16,9 +16,13 @@ const itemSchema = new mongoose.Schema({
   },
   itemDisplayImage: {
     type: String,
+    required: false,
     validate: {
       validator: function (v: string) {
-        return /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/.test(v);
+        if (!v) return true; // Allow empty or undefined
+        return /^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[\w\-./?%&=]*)?\.(jpg|jpeg|png|webp|gif)$/i.test(
+          v
+        );
       },
       message: "Invalid image URL",
     },
@@ -27,9 +31,13 @@ const itemSchema = new mongoose.Schema({
     type: [String],
     validate: {
       validator: function (v: string[]) {
-        return v.length <= 5;
+        if (!v) return true; // Allow undefined or null
+        if (v.length > 5) return false;
+        const urlRegex = /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/;
+        return v.every((imgUrl) => urlRegex.test(imgUrl));
       },
-      message: "You can upload a maximum of 5 images",
+      message:
+        "Each image must be a valid image URL and you can upload a maximum of 5 images",
     },
   },
 });
