@@ -5,6 +5,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setUser } from "../features/userSlice";
 
+axios.defaults.withCredentials = true;
 // interface AuthResponse {
 //   token: string;
 //   userId: string;
