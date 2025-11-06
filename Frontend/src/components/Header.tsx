@@ -11,7 +11,7 @@ const Header: React.FC<HeaderProps> = () => {
   const [cartItemCount] = useState(0);
   const { firstName, isLoggedIn } = useSelector(
     (state: RootState) => state.user
-  ) as { firstName: string; isLoggedIn: boolean };
+  ) as { firstName: string | null; isLoggedIn: boolean };
   const dispatch = useDispatch();
 
   return (
@@ -104,7 +104,9 @@ const Header: React.FC<HeaderProps> = () => {
                 👤
               </div>
 
-              <span className="text-sm font-semibold mr-20">{firstName}</span>
+              <span className="text-sm font-semibold mr-20">
+                {firstName || "Loading..."}
+              </span>
               <button
                 onClick={() => dispatch(logout())}
                 className="bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-full text-sm"
