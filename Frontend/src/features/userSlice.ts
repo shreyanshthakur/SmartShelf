@@ -45,15 +45,8 @@ const userSlice = createSlice({
         state.isLoggedIn = true;
       }
     },
-    logout: (state) => {
-      state.userId = null;
-      state.firstName = null;
-      state.lastName = null;
-      state.email = null;
-      state.isLoggedIn = false;
-    },
   },
 });
 
-export const { setUser, logout } = userSlice.actions;
+export const { setUser } = userSlice.actions;
 export default userSlice.reducer;
