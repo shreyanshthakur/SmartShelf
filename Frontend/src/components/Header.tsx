@@ -1,18 +1,31 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
-import { logout } from "../features/userSlice";
 import type { RootState } from "../store";
+import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../utils/authUtils";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface HeaderProps {}
 
 const Header: React.FC<HeaderProps> = () => {
   const [cartItemCount] = useState(0);
-  const { firstName, isLoggedIn } = useSelector(
-    (state: RootState) => state.user
-  ) as { firstName: string; isLoggedIn: boolean };
+  const user = useSelector((state: RootState) => state.user);
+  const isLoggedIn = user.userId !== null;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const logoutState = await logoutUser(dispatch);
+      if (logoutState) {
+        // Successfully logged out
+        navigate("/");
+      }
+    } catch (err) {
+      console.error("Error logging out", err);
+    }
+  };
 
   return (
     <header className="bg-blue-600 text-white py-4 shadow-md">
@@ -104,9 +117,11 @@ const Header: React.FC<HeaderProps> = () => {
                 👤
               </div>
 
-              <span className="text-sm font-semibold mr-20">{firstName}</span>
+              <span className="text-sm font-semibold mr-20">
+                {user.firstName || "Loading..."}
+              </span>
               <button
-                onClick={() => dispatch(logout())}
+                onClick={() => handleLogout()}
                 className="bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-full text-sm"
               >
                 Logout

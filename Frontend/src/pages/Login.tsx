@@ -5,6 +5,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setUser } from "../features/userSlice";
 
+axios.defaults.withCredentials = true;
 // interface AuthResponse {
 //   token: string;
 //   userId: string;
@@ -30,15 +31,14 @@ const LoginPage: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/v1/login",
-        loginData
+        `http://localhost:5000/api/v1/login`,
+        loginData,
+        { withCredentials: true }
       );
-      console.log("response: ", response);
-      if (response && response.data && response.data.token) {
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("userId", response.data.userId);
+      if (response && response.data && response.data.success) {
         dispatch(
           setUser({
+            userId: response.data.userId,
             firstName: response.data.firstName,
             lastName: response.data.lastName,
             email: response.data.email,

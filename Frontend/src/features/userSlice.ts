@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface UserState {
+  userId: string | null;
   firstName: string | null;
   lastName: string | null;
   email: string | null;
@@ -8,6 +9,7 @@ interface UserState {
 }
 
 const initialState: UserState = {
+  userId: null as string | null,
   firstName: null as string | null,
   lastName: null as string | null,
   email: null as string | null,
@@ -21,24 +23,30 @@ const userSlice = createSlice({
     setUser: (
       state,
       action: PayloadAction<{
+        userId: string;
         firstName: string;
         lastName: string;
         email: string;
-      }>
+      } | null>
     ) => {
-      state.firstName = action.payload.firstName;
-      state.lastName = action.payload.lastName;
-      state.email = action.payload.email;
-      state.isLoggedIn = true;
-    },
-    logout: (state) => {
-      state.firstName = null;
-      state.lastName = null;
-      state.email = null;
-      state.isLoggedIn = false;
+      if (action.payload === null) {
+        // Clear user state
+        state.userId = null;
+        state.firstName = null;
+        state.lastName = null;
+        state.email = null;
+        state.isLoggedIn = false;
+      } else {
+        // Set user data
+        state.userId = action.payload.userId;
+        state.firstName = action.payload.firstName;
+        state.lastName = action.payload.lastName;
+        state.email = action.payload.email;
+        state.isLoggedIn = true;
+      }
     },
   },
 });
 
-export const { setUser, logout } = userSlice.actions;
+export const { setUser } = userSlice.actions;
 export default userSlice.reducer;

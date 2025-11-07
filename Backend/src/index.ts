@@ -5,10 +5,26 @@ import connectDB from "./connectDB";
 import authRoutes from "./routes/auth";
 import itemRoutes from "./routes/items";
 
+import cookieParser = require("cookie-parser");
+import dotenv from "dotenv";
+
+dotenv.config();
+
 const PORT = 5000;
 const app = express();
-app.use(cors());
+
+// Configure CORS to allow credentials
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173", // Frontend URL from env
+    credentials: true, // Allow cookies to be sent
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 app.use(express.json());
+app.use(cookieParser());
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
