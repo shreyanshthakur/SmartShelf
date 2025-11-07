@@ -58,12 +58,19 @@ export const loginController = async (
         lastName: user?.lastName,
         email: user?.email,
       });
+    } else {
+      res.status(401).json({
+        sucess: false,
+        message: "Email or Password is invalid",
+        Error: "ValidationError",
+      });
+      return;
     }
   } catch (err) {
     console.error("[ERROR] Login failed:", err);
     res.status(500).json({
       success: false,
-      message: "An error occured while processing your request",
+      message: "An error occurred while processing your request",
     });
   }
   return;

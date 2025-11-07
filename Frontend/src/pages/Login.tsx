@@ -35,7 +35,6 @@ const LoginPage: React.FC = () => {
         loginData,
         { withCredentials: true }
       );
-      console.log("response: ", response);
       if (response && response.data && response.data.success) {
         dispatch(
           setUser({
