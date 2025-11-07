@@ -14,14 +14,14 @@ export const logoutController = async (
     });
 
     return res.status(200).json({
-      sucess: true,
+      success: true,
       message: "Successfully logged out",
     });
   } catch (err) {
     console.error("[ERROR] Logout failed: ", err);
     return res.status(500).json({
-      sucess: false,
-      message: "Unexpected error occured while logging out",
+      success: false,
+      message: "Unexpected error occurred while logging out",
     });
   }
 };

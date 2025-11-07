@@ -19,7 +19,7 @@ const Header: React.FC<HeaderProps> = () => {
     try {
       const logoutState = await logoutUser(dispatch);
       if (logoutState) {
-        console.log("Successfully logged out");
+        // Successfully logged out
         navigate("/");
       }
     } catch (err) {
