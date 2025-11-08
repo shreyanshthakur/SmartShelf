@@ -432,31 +432,30 @@ async function generateUniqueSlug(name: string, Model: any): Promise<string> {
   }
 
   return slug;
-  async function generateUniqueSKU(Model: any): Promise<string> {
-    let sku: string = "";
-    let exists = true;
-    const maxAttempts = 20;
-    let attempts = 0;
+}
 
-    while (exists && attempts < maxAttempts) {
-      // Generate SKU: SS (SmartShelf) + timestamp + 4 random hex chars
-      const timestamp = Date.now().toString(36);
-      const randomHex = Math.random().toString(16).slice(2, 6).toUpperCase();
-      sku = `SS${timestamp}${randomHex}`;
+async function generateUniqueSKU(Model: any): Promise<string> {
+  let sku: string = "";
+  let exists = true;
+  const maxAttempts = 20;
+  let attempts = 0;
 
-      const existing = await Model.findOne({ sku });
-      exists = !!existing;
-      attempts++;
-    }
+  while (exists && attempts < maxAttempts) {
+    // Generate SKU: SS (SmartShelf) + timestamp + 4 random hex chars
+    const timestamp = Date.now().toString(36);
+    const randomHex = Math.random().toString(16).slice(2, 6).toUpperCase();
+    sku = `SS${timestamp}${randomHex}`;
 
-    if (exists) {
-      throw new Error(
-        "Unable to generate a unique SKU after multiple attempts."
-      );
-    }
-
-    return sku;
+    const existing = await Model.findOne({ sku });
+    exists = !!existing;
+    attempts++;
   }
+
+  if (exists) {
+    throw new Error("Unable to generate a unique SKU after multiple attempts.");
+  }
+
+  return sku;
 }
 
 // ==================== STATIC METHODS ====================
