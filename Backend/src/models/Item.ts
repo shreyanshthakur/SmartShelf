@@ -420,30 +420,43 @@ async function generateUniqueSlug(name: string, Model: any): Promise<string> {
 
   let slug = baseSlug;
   let counter = 1;
+  const MAX_ITERATIONS = 1000;
 
-  // Check for uniqueness
+  // Check for uniqueness with a maximum iteration limit
   while (await Model.findOne({ itemSlug: slug })) {
+    if (counter > MAX_ITERATIONS) {
+      throw new Error("Unable to generate a unique slug after many attempts.");
+    }
     slug = `${baseSlug}-${counter}`;
     counter++;
   }
 
   return slug;
-}
+  async function generateUniqueSKU(Model: any): Promise<string> {
+    let sku: string = "";
+    let exists = true;
+    const maxAttempts = 20;
+    let attempts = 0;
 
-async function generateUniqueSKU(Model: any): Promise<string> {
-  let sku: string = "";
-  let exists = true;
+    while (exists && attempts < maxAttempts) {
+      // Generate SKU: SS (SmartShelf) + timestamp + 4 random hex chars
+      const timestamp = Date.now().toString(36);
+      const randomHex = Math.random().toString(16).slice(2, 6).toUpperCase();
+      sku = `SS${timestamp}${randomHex}`;
 
-  while (exists) {
-    // Generate SKU: SS (SmartShelf) + 6 random digits
-    const randomNum = Math.floor(Math.random() * 900000) + 100000;
-    sku = `SS${randomNum}`;
+      const existing = await Model.findOne({ sku });
+      exists = !!existing;
+      attempts++;
+    }
 
-    const existing = await Model.findOne({ sku });
-    exists = !!existing;
+    if (exists) {
+      throw new Error(
+        "Unable to generate a unique SKU after multiple attempts."
+      );
+    }
+
+    return sku;
   }
-
-  return sku;
 }
 
 // ==================== STATIC METHODS ====================
