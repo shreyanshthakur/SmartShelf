@@ -3,7 +3,7 @@ import axios from "axios";
 import { setUser } from "../features/userSlice";
 
 const REACT_APP_BACKEND_URL =
-  process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+  import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 export const checkAuth = async (dispatch: Dispatch): Promise<void> => {
   try {

@@ -103,14 +103,14 @@ const itemSchema = new mongoose.Schema(
       type: Number,
       required: [true, "Price is required"],
       min: [0, "Price cannot be negative"],
-      index: true, // Add index for price sorting/filtering
+      // Index defined in schema.index() below
     },
 
     itemCategory: {
       type: String,
       required: [true, "Category is required"],
       trim: true,
-      index: true, // Add index for category filtering
+      // Index defined in schema.index() below
     },
 
     itemStock: {
@@ -180,7 +180,7 @@ const itemSchema = new mongoose.Schema(
       type: String,
       trim: true,
       maxlength: [50, "Brand name cannot exceed 50 characters"],
-      index: true,
+      // Index defined in schema.index() below
     },
 
     tags: [

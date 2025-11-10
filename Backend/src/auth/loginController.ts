@@ -20,9 +20,9 @@ export const loginController = async (
   }
 
   try {
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ email: email }).select("+password");
 
-    if (user === null) {
+    if (!user) {
       res.status(401).json({
         success: false,
         message: "Invalid email or password",
@@ -31,7 +31,18 @@ export const loginController = async (
       return;
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // Additional safety check
+    if (!user.password) {
+      console.error("[ERROR] User password not found in database");
+      res.status(500).json({
+        success: false,
+        message: "Server error",
+        error: "DatabaseError",
+      });
+      return;
+    }
+
+    const isPasswordValid = await user.comparePassword(password);
     const jwt_secret = process.env.JWT_SECRET;
     if (!jwt_secret) {
       throw new Error("JWt_secret is not set in the env");
