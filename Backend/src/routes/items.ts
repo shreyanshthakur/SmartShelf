@@ -1,24 +1,10 @@
 import { Router } from "express";
 import Item from "../models/Item";
+import { getItemsController } from "../items/getItemsController";
 
 const router = Router();
 
-/**
- * Route: GET /itemList
- * Description: Fetch all items from the database.
- * Request: None
- * Response:
- *   - 200: Returns an array of items.
- *   - 500: Returns an error message if the database query fails.
- */
-router.get("/itemList", async (req, res) => {
-  try {
-    const items = await Item.find();
-    res.json(items);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch items from database" });
-  }
-});
+router.get("/itemList", getItemsController);
 
 router.get("/itemList/:id", async (req, res) => {
   try {
