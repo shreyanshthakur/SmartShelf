@@ -18,7 +18,7 @@ function HomePage() {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/v1/itemList");
+        const res = await axios.get("http://localhost:5000/api/v1/items");
         setItems(res.data);
       } catch (err) {
         console.error(err);

@@ -2,12 +2,14 @@ import { Router } from "express";
 import Item from "../models/Item";
 import { getItemsController } from "../items/getItemsController";
 import { getItemByIdController } from "../items/getItemByIdController";
+import { createItemController } from "../items/createItemController";
+import { uploadImages } from "../middleware/upload";
 
 const router = Router();
 
 router.get("/items", getItemsController);
 router.get("/items/:id", getItemByIdController);
-
+router.get("/item", createItemController);
 router.post("/itemList", async (req, res) => {
   try {
     const data = req.body;
