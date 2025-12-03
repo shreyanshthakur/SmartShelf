@@ -1,21 +1,20 @@
 import { Request, Response, NextFunction } from "express";
 import multer from "multer";
 import multerS3 from "multer-s3";
-import AWS from "aws-sdk";
-import s3 from "../config/aws";
+import s3Client from "../config/aws";
 
 const upload = multer({
   storage: multerS3({
-    s3: s3 as any,
+    s3: s3Client,
     bucket: process.env.S3_BUCKET_NAME || "default-bucket-name",
-    acl: "public-read",
+    contentType: multerS3.AUTO_CONTENT_TYPE,
     metadata: function (req, file, cb) {
       cb(null, { fieldName: file.fieldname });
     },
     key: function (req, file, cb) {
-      const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${
-        file.originalname
-      }`;
+      const uniqueName = `${Date.now()}-${Math.round(
+        Math.random() * 1e9
+      )}-${file.originalname.replace(/\s+/g, "-")}`;
       cb(null, `products/images/${uniqueName}`);
     },
   }),
@@ -23,7 +22,7 @@ const upload = multer({
     if (file.mimetype.startsWith("image/")) {
       cb(null, true);
     } else {
-      cb(null, false);
+      cb(new Error("Only image files are allowed!") as any, false);
     }
   },
   limits: {
@@ -39,8 +38,10 @@ export async function uploadImages(
 ) {
   const multerMiddleware = upload.array("images", 5);
 
-  multerMiddleware(req, res, (error) => {
+  multerMiddleware(req, res, (error: any) => {
     if (error) {
+      console.error("Upload error:", error);
+
       if (error instanceof multer.MulterError) {
         if (error.code === "LIMIT_FILE_SIZE") {
           return res.status(400).json({ message: "File too large (max 5MB)" });
@@ -54,7 +55,9 @@ export async function uploadImages(
       }
       return res.status(400).json({ message: error.message });
     }
+
     const uploadedFiles = req.files as Express.Multer.File[];
+
     if (!uploadedFiles || uploadedFiles.length === 0) {
       return res.status(400).json({ message: "No images provided" });
     }
@@ -67,6 +70,7 @@ export async function uploadImages(
       originalName: file.originalname,
     }));
 
+    console.log(`Successfully uploaded ${uploadedFiles.length} image(s)`);
     next();
   });
 }

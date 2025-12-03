@@ -206,7 +206,7 @@ const itemSchema = new mongoose.Schema(
 
     sku: {
       type: String,
-      required: true,
+      required: false, // Not required, will be auto-generated
       unique: true,
       uppercase: true,
       trim: true,
