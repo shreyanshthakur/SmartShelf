@@ -7,6 +7,8 @@ type ItemType = {
   _id?: string;
   itemName: string;
   itemPrice: string;
+  itemDisplayImage: string;
+  itemImages: string[];
   // add other properties as needed
 };
 
@@ -18,8 +20,9 @@ function HomePage() {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/v1/itemList");
+        const res = await axios.get("http://localhost:5000/api/v1/items");
         setItems(res.data);
+        setLoading(false);
       } catch (err) {
         console.error(err);
         setError("Failed to fetch items.");
@@ -55,7 +58,11 @@ function HomePage() {
                     key={item._id ?? index}
                     to={`/itemDescriptionPage?itemId=${item._id}`}
                   >
-                    <Item itemName={item.itemName} itemPrice={item.itemPrice} />
+                    <Item
+                      itemName={item.itemName}
+                      itemPrice={item.itemPrice}
+                      itemImage={item.itemDisplayImage}
+                    />
                   </Link>
                 ))
               )}

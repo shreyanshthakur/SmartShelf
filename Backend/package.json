@@ -15,6 +15,9 @@
   "license": "ISC",
   "description": "E-commerce backend with TypeScript",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.943.0",
+    "@types/multer": "^2.0.0",
+    "@types/multer-s3": "^3.0.3",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -22,7 +25,10 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.17.0",
-    "mongoose": "^8.16.1"
+    "mongoose": "^8.16.1",
+    "multer": "^2.0.2",
+    "multer-s3": "^3.0.1",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

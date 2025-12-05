@@ -2,12 +2,14 @@
 interface ItemProps {
   itemName: string;
   itemPrice: string;
+  itemImage: string;
 }
 
-const Item: React.FC<ItemProps> = ({ itemName, itemPrice }) => {
+const Item: React.FC<ItemProps> = ({ itemName, itemPrice, itemImage }) => {
   return (
     <div className="bg-white shadow-lg rounded-xl p-6 flex flex-col items-center justify-center transition-transform transform hover:scale-105 hover:shadow-2xl duration-200">
       <img
+        src={itemImage}
         alt={itemName}
         className="w-36 h-36 object-cover mb-4 rounded-lg border border-gray-200 shadow-sm bg-gray-50"
       />
