@@ -70,6 +70,28 @@ export const fetchCart = createAsyncThunk(
   }
 );
 
+export const updateCartItemQuantity = createAsyncThunk(
+  "cart/updateQuantity",
+  async (
+    { itemId, quantity }: { itemId: string; quantity: number },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/v1/cart/${itemId}`,
+        { quantity },
+        { withCredentials: true }
+      );
+      return response.data.cart;
+    } catch (error: unknown) {
+      return rejectWithValue(
+        (error as { response?: { data?: { message?: string } } }).response?.data
+          ?.message || "Failed to update quantity"
+      );
+    }
+  }
+);
+
 const cartSlice = createSlice({
   name: "cart",
   initialState,
