@@ -92,6 +92,24 @@ export const updateCartItemQuantity = createAsyncThunk(
   }
 );
 
+export const removeFromCart = createAsyncThunk(
+  "cart/removeItem",
+  async ({ itemId }: { itemId: string }, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:5000/api/v1/cart/${itemId}`,
+        { withCredentials: true }
+      );
+      return response.data.cart;
+    } catch (error: unknown) {
+      return rejectWithValue(
+        (error as { response?: { data?: { message?: string } } }).response?.data
+          ?.message || "Failed to delete item from cart"
+      );
+    }
+  }
+);
+
 const cartSlice = createSlice({
   name: "cart",
   initialState,
