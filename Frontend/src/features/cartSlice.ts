@@ -53,6 +53,23 @@ export const addToCart = createAsyncThunk(
   }
 );
 
+export const fetchCart = createAsyncThunk(
+  "cart/fetchCart",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/v1/cart", {
+        withCredentials: true,
+      });
+      return response.data.cart;
+    } catch (error: unknown) {
+      return rejectWithValue(
+        (error as { response?: { data?: { message?: string } } }).response?.data
+          ?.message || "Failed to fetch cart"
+      );
+    }
+  }
+);
+
 const cartSlice = createSlice({
   name: "cart",
   initialState,
