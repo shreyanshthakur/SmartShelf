@@ -9,7 +9,7 @@ interface CartState {
   error: string | null;
 }
 
-interface CartItem {
+export interface CartItem {
   _id: string;
   productId: {
     _id: string;
@@ -110,12 +110,51 @@ export const removeFromCart = createAsyncThunk(
   }
 );
 
+export const clearCart = createAsyncThunk(
+  "cart/clearCart",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete("http://localhost:5000/api/v1/cart", {
+        withCredentials: true,
+      });
+      return response.data.cart;
+    } catch (error: unknown) {
+      return rejectWithValue(
+        (error as { response?: { data?: { message?: string } } }).response?.data
+          ?.message || "Failed to clear cart"
+      );
+    }
+  }
+);
+
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
     resetCartError: (state) => {
       state.error = null;
+    },
+    clearCartState: (state) => {
+      state.items = [];
+      state.totalAmount = 0;
+      state.totalItems = 0;
+      state.error = null;
+    },
+    incrementItemQuantity: (state, action) => {
+      const item = state.items.find((item) => item._id === action.payload);
+      if (item) {
+        item.quantity += 1;
+        state.totalItems += 1;
+        state.totalAmount += item.priceAtTimeOfAdding;
+      }
+    },
+    decrementItemQuantity: (state, action) => {
+      const item = state.items.find((item) => item._id === action.payload);
+      if (item && item.quantity > 1) {
+        item.quantity -= 1;
+        state.totalItems -= 1;
+        state.totalAmount -= item.priceAtTimeOfAdding;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -133,9 +172,46 @@ const cartSlice = createSlice({
       .addCase(addToCart.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(fetchCart.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCart.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = action.payload.items;
+        state.totalAmount = action.payload.totalAmount;
+        state.totalItems = action.payload.totalItems;
+      })
+      .addCase(fetchCart.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateCartItemQuantity.fulfilled, (state, action) => {
+        state.items = action.payload.items;
+        state.totalAmount = action.payload.totalAmount;
+        state.totalItems = action.payload.totalItems;
+      })
+      .addCase(removeFromCart.fulfilled, (state, action) => {
+        state.items = action.payload.items;
+        state.totalAmount = action.payload.totalAmount;
+        state.totalItems = action.payload.totalItems;
+      })
+      .addCase(clearCart.fulfilled, (state) => {
+        state.items = [];
+        state.totalAmount = 0;
+        state.totalItems = 0;
       });
   },
 });
 
+export const selectCartItems = (state: { cart: CartState }) => state.cart.items;
+export const selectCartTotalAmount = (state: { cart: CartState }) =>
+  state.cart.totalAmount;
+export const selectCartItemCount = (state: { cart: CartState }) =>
+  state.cart.totalItems;
+export const selectCartLoading = (state: { cart: CartState }) =>
+  state.cart.loading;
+export const selectCartError = (state: { cart: CartState }) => state.cart.error;
 export const { resetCartError } = cartSlice.actions;
 export default cartSlice.reducer;
