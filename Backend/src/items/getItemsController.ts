@@ -7,6 +7,7 @@ export const getItemsController = async (
 ): Promise<void> => {
   // this route should return all the items in the database
   try {
+    console.log("[DEBUG] Backend - getItemsController called");
     const items = await Item.find();
     if (!items) {
       res.status(404).json({ error: "Item not found" });

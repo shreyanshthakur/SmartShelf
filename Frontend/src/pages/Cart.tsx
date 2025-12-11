@@ -28,6 +28,7 @@ export const Cart = () => {
 
   if (loading) return <div>Loading cart...</div>;
   if (error) return <div>Error: {error}</div>;
+  if (!items) return <div>Your cart is empty</div>;
   if (items.length === 0) return <div>Your cart is empty</div>;
 
   return (

@@ -4,6 +4,10 @@ import Item from "../models/Item";
 
 export const addToCartController = async (req: Request, res: Response) => {
   try {
+    console.log("[DEBUG] addToCartController called");
+    console.log(req);
+    console.log((req as any).user?.userId);
+
     const userId = (req as any).user?.userId;
 
     if (!userId) {

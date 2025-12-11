@@ -4,7 +4,10 @@ import Item from "../models/Item";
 export const getItemByIdController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const item = await Item.findById(id).populate("owner", "username", "email");
+    console.log("[DEBUG] id is: ", id);
+    console.log("[DEBUG] here");
+    const item = await Item.findById(id).populate("owner", "username email");
+    console.log("[DEBUD] item is: ", item);
     if (!item) {
       return res.status(404).json({
         success: false,

@@ -29,7 +29,7 @@ export const ItemDescriptionPage = () => {
         setError(null);
 
         const response = await axios.get(
-          `${backendUrl}/api/v1/itemList/${itemId}`
+          `${backendUrl}/api/v1/items/${itemId}`
         );
         if (response.status !== 200) {
           throw new Error(`Http error: ${response.status}`);
