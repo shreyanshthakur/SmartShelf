@@ -14,9 +14,6 @@ export const addToCartController = async (req: Request, res: Response) => {
     }
 
     const { productId, quantity = 1 } = req.body;
-    const parsedQuantity = parseInt(quantity);
-    console.log("[DEBUG] Product ID: ", productId);
-    console.log("[DEBUG] Quantity: ", quantity);
     if (!productId) {
       return res.status(400).json({ message: "Product ID is required" });
     }
@@ -31,7 +28,7 @@ export const addToCartController = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Product is not available" });
     }
 
-    if (product.itemStock < parsedQuantity) {
+    if (product.itemStock < quantity) {
       return res.status(400).json({
         message: `Insufficient stock, Only ${product.itemStock} items available in stock`,
       });
@@ -52,8 +49,7 @@ export const addToCartController = async (req: Request, res: Response) => {
     );
 
     if (existingItemIndex > -1) {
-      const newQuantity =
-        cart.items[existingItemIndex].quantity + parsedQuantity;
+      const newQuantity = cart.items[existingItemIndex].quantity + quantity;
 
       if (newQuantity > product.itemStock) {
         return res.status(400).json({

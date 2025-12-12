@@ -24,7 +24,7 @@ const Item: React.FC<ItemProps> = ({
       await dispatch(
         addToCart({
           productId: itemId,
-          quantity: "1",
+          quantity: 1,
         })
       ).unwrap();
 
