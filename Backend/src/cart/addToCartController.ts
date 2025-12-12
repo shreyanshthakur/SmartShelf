@@ -5,9 +5,8 @@ import Item from "../models/Item";
 export const addToCartController = async (req: Request, res: Response) => {
   try {
     console.log("[DEBUG] addToCartController called");
-    console.log(req);
     console.log((req as any).user?.userId);
-
+    console.log("[DEBUG] After user?.userId");
     const userId = (req as any).user?.userId;
 
     if (!userId) {
@@ -15,7 +14,9 @@ export const addToCartController = async (req: Request, res: Response) => {
     }
 
     const { productId, quantity = 1 } = req.body;
-
+    const parsedQuantity = parseInt(quantity);
+    console.log("[DEBUG] Product ID: ", productId);
+    console.log("[DEBUG] Quantity: ", quantity);
     if (!productId) {
       return res.status(400).json({ message: "Product ID is required" });
     }
@@ -30,7 +31,7 @@ export const addToCartController = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Product is not available" });
     }
 
-    if (product.itemStock < quantity) {
+    if (product.itemStock < parsedQuantity) {
       return res.status(400).json({
         message: `Insufficient stock, Only ${product.itemStock} items available in stock`,
       });
@@ -51,7 +52,8 @@ export const addToCartController = async (req: Request, res: Response) => {
     );
 
     if (existingItemIndex > -1) {
-      const newQuantity = cart.items[existingItemIndex].quantity + quantity;
+      const newQuantity =
+        cart.items[existingItemIndex].quantity + parsedQuantity;
 
       if (newQuantity > product.itemStock) {
         return res.status(400).json({

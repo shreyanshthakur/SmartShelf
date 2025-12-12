@@ -59,6 +59,7 @@ function HomePage() {
                     to={`/itemDescriptionPage?itemId=${item._id}`}
                   >
                     <Item
+                      itemId={item._id || ""}
                       itemName={item.itemName}
                       itemPrice={item.itemPrice}
                       itemImage={item.itemDisplayImage}
