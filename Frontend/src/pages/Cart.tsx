@@ -15,9 +15,13 @@ export const Cart = () => {
   );
 
   useEffect(() => {
+    console.log("[DEBUG] Cart component mounted, fetching cart...");
     dispatch(fetchCart());
   }, [dispatch]);
-
+  console.log("[DEBUG] Cart state - items:", items);
+  console.log("[DEBUG] Cart state - items length:", items?.length);
+  console.log("[DEBUG] Cart state - loading:", loading);
+  console.log("[DEBUG] Cart state - error:", error);
   const handleRemove = (itemId: string) => {
     dispatch(removeFromCart({ itemId }));
   };

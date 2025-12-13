@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
 import type { RootState } from "../store";
@@ -9,7 +9,9 @@ import { logoutUser } from "../utils/authUtils";
 interface HeaderProps {}
 
 const Header: React.FC<HeaderProps> = () => {
-  const [cartItemCount] = useState(0);
+  const cartItemCount = useSelector(
+    (state: RootState) => state.cart.totalItems
+  );
   const user = useSelector((state: RootState) => state.user);
   const isLoggedIn = user.userId !== null;
   const dispatch = useDispatch();
@@ -106,7 +108,12 @@ const Header: React.FC<HeaderProps> = () => {
           to="/cart"
           className="text-xl bg-blue-500 hover:bg-blue-700 text-white py-2 rounded-xl p-2"
         >
-          Cart {cartItemCount}
+          Cart:
+          {cartItemCount > 0 && (
+            <span className="ml-2 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+              {cartItemCount}
+            </span>
+          )}
         </Link>
 
         {/* Profile Section */}
