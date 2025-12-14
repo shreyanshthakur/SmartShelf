@@ -42,23 +42,18 @@ export const ItemDescriptionPage = () => {
         setLoading(true);
         setError(null);
 
-        console.log("[DEBUG] Fetching item with ID:", itemId);
         const response = await axios.get(
           `${backendUrl}/api/v1/items/${itemId}`
         );
 
-        console.log("[DEBUG] Response:", response.data);
         const itemData = response.data.item;
 
         if (!itemData) {
           setError("Item not found");
           return;
         }
-
-        console.log("[DEBUG] Fetched item:", itemData);
         setItem(itemData);
       } catch (err) {
-        console.error("Error fetching item:", err);
         if (axios.isAxiosError(err)) {
           setError(err.response?.data?.message || "Failed to load item");
         } else {
