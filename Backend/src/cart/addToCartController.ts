@@ -4,6 +4,9 @@ import Item from "../models/Item";
 
 export const addToCartController = async (req: Request, res: Response) => {
   try {
+    console.log("[DEBUG] addToCartController called");
+    console.log((req as any).user?.userId);
+    console.log("[DEBUG] After user?.userId");
     const userId = (req as any).user?.userId;
 
     if (!userId) {
@@ -11,7 +14,6 @@ export const addToCartController = async (req: Request, res: Response) => {
     }
 
     const { productId, quantity = 1 } = req.body;
-
     if (!productId) {
       return res.status(400).json({ message: "Product ID is required" });
     }

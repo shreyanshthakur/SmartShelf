@@ -4,15 +4,22 @@ import Item from "../models/Item";
 export const getItemByIdController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const item = await Item.findById(id).populate("owner", "username", "email");
+
+    const item = await Item.findById(id);
+
     if (!item) {
       return res.status(404).json({
         success: false,
-        message: "Unable to fetch specific item by ID",
+        message: "Item not found",
       });
     }
+
     res.json({ item });
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch items from database" });
+    console.error("[ERROR] Failed to fetch item:", err);
+    res.status(500).json({
+      error: "Failed to fetch item from database",
+      message: err instanceof Error ? err.message : "Unknown error",
+    });
   }
 };
