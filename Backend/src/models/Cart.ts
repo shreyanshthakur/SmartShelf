@@ -5,6 +5,7 @@ export interface ICart extends Document {
   userId: Types.ObjectId;
 
   items: Array<{
+    _id?: Types.ObjectId;
     productId: Types.ObjectId;
     quantity: number;
     priceAtTimeOfAdding: number;
