@@ -7,9 +7,11 @@ import {
   type CartItem,
 } from "../features/cartSlice";
 import type { AppDispatch, RootState } from "../store";
+import { useNavigate } from "react-router-dom";
 
 export const Cart = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const { items, totalAmount, loading, error } = useSelector(
     (state: RootState) => state.cart
   );
@@ -24,6 +26,10 @@ export const Cart = () => {
 
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
     dispatch(updateCartItemQuantity({ itemId, quantity: newQuantity }));
+  };
+
+  const handleCheckout = () => {
+    navigate("/checkout");
   };
 
   if (loading) {
@@ -164,7 +170,12 @@ export const Cart = () => {
               </span>
             </div>
           </div>
-          <button className="w-full mt-6 px-6 py-3 bg-indigo-600 text-white text-lg font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors">
+          <button
+            className="w-full mt-6 px-6 py-3 bg-indigo-600 text-white text-lg font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
+            onClick={() => {
+              handleCheckout();
+            }}
+          >
             Proceed to Checkout
           </button>
         </div>
