@@ -9,6 +9,7 @@ import Signin from "./pages/Signin";
 import { Cart } from "./pages/Cart";
 import { ItemDescriptionPage } from "./pages/ItemDescriptionPage";
 import { checkAuth } from "./utils/authUtils";
+import { Checkout } from "./pages/Checkout";
 
 function App() {
   const dispatch = useDispatch();
@@ -31,6 +32,7 @@ function App() {
             path="/itemDescriptionPage"
             element={<ItemDescriptionPage />}
           />
+          <Route path="checkout" element={<Checkout />} />
         </Routes>
       </main>
       <Footer />
