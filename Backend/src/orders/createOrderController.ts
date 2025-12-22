@@ -57,7 +57,7 @@ export const createOrderController = async (req: Request, res: Response) => {
 
     if (!cart.items || cart.items.length == 0) {
       await session.abortTransaction();
-      res.status(400).json({
+      return res.status(400).json({
         message: "Cannot create order from empty cart",
       });
     }
@@ -96,8 +96,12 @@ export const createOrderController = async (req: Request, res: Response) => {
       const linetotal = currentPrice * cartItem.quantity;
       calculatedTotalAmount += linetotal;
 
-      product.reserved = (product.reserved || 0) + cartItem.quantity;
-      await product.save({ session });
+      // Use findByIdAndUpdate to avoid full validation - only update reserved field
+      await Item.findByIdAndUpdate(
+        cartItem.productId,
+        { $inc: { reserved: cartItem.quantity } },
+        { session }
+      );
 
       orderItems.push({
         productId: cartItem.productId,
@@ -112,7 +116,7 @@ export const createOrderController = async (req: Request, res: Response) => {
 
     const newOrder = new Order({
       userId,
-      orders: orderItems,
+      orderItems: orderItems,
       status: "placed",
       totalAmount: calculatedTotalAmount,
       estimatedDeliveryDate,
@@ -129,7 +133,7 @@ export const createOrderController = async (req: Request, res: Response) => {
     await session.commitTransaction();
 
     const populateOrder = await Order.findById(newOrder._id)
-      .populate("Orders.productId", "itemName itemDisplayImage itemPrice")
+      .populate("orderItems.productId", "itemName itemDisplayImage itemPrice")
       .populate("userId", "name email");
 
     res.status(201).json({
