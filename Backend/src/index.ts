@@ -5,6 +5,7 @@ import connectDB from "./connectDB";
 import authRoutes from "./routes/auth";
 import itemRoutes from "./routes/items";
 import cartRoutes from "./routes/cart";
+import orderRoutes from "./routes/orders";
 
 import cookieParser = require("cookie-parser");
 import dotenv from "dotenv";
@@ -42,6 +43,7 @@ try {
 app.use("/api/v1/", authRoutes);
 app.use("/api/v1", itemRoutes);
 app.use("/api/v1", cartRoutes);
+app.use("/api/v1", orderRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
