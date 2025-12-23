@@ -45,13 +45,12 @@ export const createOrderController = async (req: Request, res: Response) => {
 
     const cart = await Cart.findOne({
       userId,
-      status: "active",
     }).session(session);
 
     if (!cart) {
       await session.abortTransaction();
       return res.status(404).json({
-        message: "No active cart found for user",
+        message: "No cart found for user",
       });
     }
 
@@ -127,6 +126,8 @@ export const createOrderController = async (req: Request, res: Response) => {
 
     await newOrder.save({ session });
 
+    // Clear cart items after order is placed
+    cart.items = [];
     await cart.save({ session });
 
     await session.commitTransaction();

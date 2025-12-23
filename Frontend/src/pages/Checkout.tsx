@@ -1,12 +1,16 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import type { RootState } from "../store";
+import type { RootState, AppDispatch } from "../store";
 import { useState } from "react";
+import axios from "axios";
+import { fetchCart } from "../features/cartSlice";
 
 export const Checkout = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { items, totalAmount } = useSelector((state: RootState) => state.cart);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const [shippingInfo, setShippingInfo] = useState({
     fullName: "",
@@ -34,31 +38,63 @@ export const Checkout = () => {
   const handlePlaceOrder = async () => {
     // Validation
     if (!shippingInfo.fullName || !shippingInfo.email || !shippingInfo.phone) {
-      alert("Please fill in all shipping information");
+      setError("Please fill in all required shipping information");
       return;
     }
 
-    if (!paymentInfo.cardNumber || !paymentInfo.cvv) {
-      alert("Please fill in all payment information");
+    if (
+      !shippingInfo.address ||
+      !shippingInfo.city ||
+      !shippingInfo.state ||
+      !shippingInfo.zipCode
+    ) {
+      setError("Please fill in complete shipping address");
+      return;
+    }
+
+    if (
+      !paymentInfo.cardNumber ||
+      !paymentInfo.cvv ||
+      !paymentInfo.expiryDate ||
+      !paymentInfo.cardName
+    ) {
+      setError("Please fill in all payment information");
       return;
     }
 
     setLoading(true);
+    setError(null);
 
     try {
-      // API call would go here
-      console.log("Order Data:", {
-        shippingInfo,
-        paymentInfo,
-        items,
-        finalTotal,
-      });
+      // Format delivery address
+      const deliveryAddress = `${shippingInfo.fullName}, ${shippingInfo.address}, ${shippingInfo.city}, ${shippingInfo.state} ${shippingInfo.zipCode}, ${shippingInfo.country}. Contact: ${shippingInfo.phone}, ${shippingInfo.email}`;
 
-      alert("Order placed successfully!");
-      navigate("/");
-    } catch (error) {
-      console.log(error);
-      alert("Failed to place order");
+      // Create order
+      const response = await axios.post(
+        "http://localhost:5000/api/v1/order",
+        {
+          deliveryAddress,
+          paymentMethod: "card", // Since we're collecting card info
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.order) {
+        // Fetch cart to get updated (cleared) state from backend
+        await dispatch(fetchCart());
+
+        alert(
+          `Order placed successfully! Order ID: ${response.data.order._id}`
+        );
+        navigate("/");
+      }
+    } catch (error: unknown) {
+      console.error("Order placement error:", error);
+      const errorMessage =
+        (error as { response?: { data?: { message?: string } } }).response?.data
+          ?.message || "Failed to place order. Please try again.";
+      setError(errorMessage);
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -86,6 +122,14 @@ export const Checkout = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-gray-800 mb-8">Checkout</h1>
+
+        {/* Error Display */}
+        {error && (
+          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <p className="font-medium">Error</p>
+            <p className="text-sm">{error}</p>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Forms */}

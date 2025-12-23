@@ -24,7 +24,7 @@ export const updateCartItemQuantityController = async (
     }
 
     // find the user's cart
-    const cart = await Cart.findOne({ userId, status: "active" });
+    const cart = await Cart.findOne({ userId });
 
     if (!cart) {
       return res.status(404).json({ message: "Cart not found" });
