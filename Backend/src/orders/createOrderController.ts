@@ -127,7 +127,6 @@ export const createOrderController = async (req: Request, res: Response) => {
 
     await newOrder.save({ session });
 
-    cart.status = "converted";
     await cart.save({ session });
 
     await session.commitTransaction();

@@ -12,8 +12,6 @@ export interface ICart extends Document {
     addedAt: Date;
   }>;
 
-  status: "active" | "abandoned" | "converted";
-
   createdAt: Date;
   updatedAt: Date;
 
@@ -55,16 +53,6 @@ const cartSchema = new Schema<ICart>(
         },
       },
     ],
-
-    status: {
-      type: String,
-      enum: {
-        values: ["active", "abandoned", "converted"],
-        message: "Status must be active, abandoned or converted",
-      },
-      default: "active",
-      index: true,
-    },
   },
   {
     timestamps: true,
@@ -94,9 +82,8 @@ cartSchema.virtual("totalItems").get(function () {
   return this.items.reduce((sum, item) => sum + item.quantity, 0);
 });
 
-// Indexes for performance
-cartSchema.index({ userId: 1, status: 1 });
-cartSchema.index({ status: 1, updatedAt: 1 });
+// Index for performance
+cartSchema.index({ updatedAt: 1 });
 
 // Pre-save hook: Clean up items with 0 or negative quantity
 cartSchema.pre("save", function (next) {
