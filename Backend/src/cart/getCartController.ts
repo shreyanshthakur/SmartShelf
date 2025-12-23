@@ -9,7 +9,7 @@ export const getCartController = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    let cart = await Cart.findOne({ userId, status: "active" }).populate(
+    let cart = await Cart.findOne({ userId }).populate(
       "items.productId",
       "itemName itemPrice itemDisplayImage itemStock"
     );

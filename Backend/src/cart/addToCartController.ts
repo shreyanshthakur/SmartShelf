@@ -34,13 +34,12 @@ export const addToCartController = async (req: Request, res: Response) => {
       });
     }
 
-    let cart = await Cart.findOne({ userId, status: "active" });
+    let cart = await Cart.findOne({ userId });
 
     if (!cart) {
       cart = new Cart({
         userId,
         items: [],
-        status: "active",
       });
     }
 
@@ -67,9 +66,10 @@ export const addToCartController = async (req: Request, res: Response) => {
         addedAt: new Date(),
       });
     }
+    console.log("[DEBUG] Coming till save");
 
     await cart.save();
-
+    console.log("[DEBUG] After save");
     await cart.populate(
       "items.productId",
       "itemName itemPrice itemDisplayImage itemStock"
