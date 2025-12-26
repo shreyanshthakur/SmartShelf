@@ -20,6 +20,9 @@ export interface IOrder extends Document {
   estimatedDeliveryDate: Date;
   deliveryAddress: string;
   paymentMethod: string;
+  paymentStatus: "pending" | "completed" | "failed";
+  stripePaymentIntentId?: string;
+  stripeSessionId?: string;
 
   isOverdue: boolean;
   itemCount: number;
@@ -111,6 +114,25 @@ const orderSchema = new Schema<IOrder>(
         message: "Payment method must be card, cash, upi, or netbanking",
       },
       lowercase: true,
+    },
+
+    paymentStatus: {
+      type: String,
+      enum: {
+        values: ["pending", "completed", "failed"],
+        message: "Payment status must be pending, completed or failed",
+      },
+      default: "pending",
+    },
+
+    stripePaymentIntentId: {
+      type: String,
+      sparse: true,
+    },
+
+    stripeSessionId: {
+      type: String,
+      sparse: true,
     },
   },
   {
