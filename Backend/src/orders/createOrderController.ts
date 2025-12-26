@@ -4,6 +4,12 @@ import Item from "../models/Item";
 import mongoose from "mongoose";
 import { validateHeaderName } from "http";
 import Cart from "../models/Cart";
+import Stripe from "stripe";
+import { Transaction } from "mongodb";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2025-12-15.clover",
+});
 
 export const createOrderController = async (req: Request, res: Response) => {
   const session = await mongoose.startSession();
@@ -16,7 +22,33 @@ export const createOrderController = async (req: Request, res: Response) => {
       });
     }
 
-    const { deliveryAddress, paymentMethod } = req.body;
+    const { deliveryAddress, paymentMethod, paymentIntentId } = req.body;
+
+    if (paymentMethod === "card") {
+      if (!paymentIntentId) {
+        return res.status(400).json({
+          message: "Payment Intent is required for card payments",
+        });
+      }
+
+      try {
+        const paymentIntent = await stripe.paymentIntents.retrieve(
+          paymentIntentId
+        );
+        if (paymentIntent.status !== "succeeded") {
+          await session.abortTransaction();
+          return res.status(400).json({
+            message:
+              "Payment has not been completed. Please complete payment first.",
+          });
+        }
+      } catch (error) {
+        await session.abortTransaction();
+        return res.status(400).json({
+          message: "Invalide payment intent",
+        });
+      }
+    }
 
     if (!deliveryAddress || !paymentMethod) {
       await session.abortTransaction();
@@ -121,6 +153,8 @@ export const createOrderController = async (req: Request, res: Response) => {
       estimatedDeliveryDate,
       deliveryAddress,
       paymentMethod: paymentMethod.toLowerCase(),
+      paymentStatus: paymentIntentId === "card" ? "completed" : "pending",
+      stripePaymentIntentId: paymentIntentId || undefined,
       createdAt: new Date(),
     });
 
