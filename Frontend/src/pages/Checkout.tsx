@@ -19,6 +19,8 @@ export const Checkout = () => {
   const [paymentIntentId, setPaymentIntentId] = useState<string>("");
   const [paymentMethod, setPaymentMethod] = useState<"card" | "cod">("card");
 
+  const BACKEND_URL =
+    import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
   const [shippingInfo, setShippingInfo] = useState({
     fullName: "",
     email: "",
@@ -44,7 +46,7 @@ export const Checkout = () => {
   const createPaymentIntent = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/v1/create-payment-intent",
+        `${BACKEND_URL}/api/v1/create-payment-intent`,
         {},
         { withCredentials: true }
       );
@@ -90,7 +92,7 @@ export const Checkout = () => {
 
       // Create order
       const response = await axios.post(
-        "http://localhost:5000/api/v1/order",
+        `${BACKEND_URL}/api/v1/order`,
         {
           deliveryAddress,
           paymentMethod: paymentMethod === "cod" ? "cash" : paymentMethod,
@@ -120,16 +122,14 @@ export const Checkout = () => {
     }
   };
 
-  const appearance = {
-    theme: "stripe" as const,
-  };
-
   const options = useMemo(
     () => ({
       clientSecret,
-      appearance,
+      appearance: {
+        theme: "stripe" as const,
+      },
     }),
-    [clientSecret, appearance]
+    [clientSecret]
   );
 
   if (!items || items.length === 0) {
