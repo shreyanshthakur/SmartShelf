@@ -2,12 +2,12 @@ import type { Dispatch } from "@reduxjs/toolkit";
 import axios from "axios";
 import { setUser } from "../features/userSlice";
 
-const REACT_APP_BACKEND_URL =
+const VITE_BACKEND_URL =
   import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 export const checkAuth = async (dispatch: Dispatch): Promise<void> => {
   try {
-    const response = await axios.get(`${REACT_APP_BACKEND_URL}/api/v1/me`, {
+    const response = await axios.get(`${VITE_BACKEND_URL}/api/v1/me`, {
       withCredentials: true,
     });
     // Debug log removed for production
@@ -35,7 +35,7 @@ export const checkAuth = async (dispatch: Dispatch): Promise<void> => {
 export const logoutUser = async (dispatch: Dispatch): Promise<boolean> => {
   try {
     const response = await axios.post(
-      `${REACT_APP_BACKEND_URL}/api/v1/logout`,
+      `${VITE_BACKEND_URL}/api/v1/logout`,
       null,
       {
         withCredentials: true,

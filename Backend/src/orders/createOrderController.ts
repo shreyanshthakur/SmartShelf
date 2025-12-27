@@ -45,7 +45,7 @@ export const createOrderController = async (req: Request, res: Response) => {
       } catch (error) {
         await session.abortTransaction();
         return res.status(400).json({
-          message: "Invalide payment intent",
+          message: "Invalid payment intent",
         });
       }
     }
@@ -153,7 +153,7 @@ export const createOrderController = async (req: Request, res: Response) => {
       estimatedDeliveryDate,
       deliveryAddress,
       paymentMethod: paymentMethod.toLowerCase(),
-      paymentStatus: paymentMethod === "card" ? "completed" : "pending",
+      paymentStatus: paymentIntentId ? "completed" : "pending",
       stripePaymentIntentId: paymentIntentId || undefined,
       createdAt: new Date(),
     });

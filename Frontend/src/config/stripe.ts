@@ -1,5 +1,11 @@
 import { loadStripe } from "@stripe/stripe-js";
 
-export const stripePromise = loadStripe(
-  "pk_test_51Shx8aFoIrjdaHsHxxxlsKiLN7lOerG0JBNYeOI4IZiU96j5FKJJr0wLKWFbk6m8JjM8Rvuqrw8bIF4BFTr7EnWy00iJgOw0Qp"
-);
+const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+
+if (!stripePublicKey) {
+  throw new Error(
+    "VITE_STRIPE_PUBLIC_KEY is not defined. Please set the environment variable before initializing Stripe."
+  );
+}
+
+export const stripePromise = loadStripe(stripePublicKey);
