@@ -153,7 +153,7 @@ export const createOrderController = async (req: Request, res: Response) => {
       estimatedDeliveryDate,
       deliveryAddress,
       paymentMethod: paymentMethod.toLowerCase(),
-      paymentStatus: paymentIntentId === "card" ? "completed" : "pending",
+      paymentStatus: paymentMethod === "card" ? "completed" : "pending",
       stripePaymentIntentId: paymentIntentId || undefined,
       createdAt: new Date(),
     });
