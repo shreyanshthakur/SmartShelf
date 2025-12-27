@@ -28,7 +28,7 @@ export const ItemDescriptionPage = () => {
 
   const itemId = searchParams.get("itemId");
   const backendUrl =
-    import.meta.env.REACT_APP_BACKEND_URL || `http://localhost:5000`;
+    import.meta.env.VITE_BACKEND_URL || `http://localhost:5000`;
 
   useEffect(() => {
     if (!itemId) {

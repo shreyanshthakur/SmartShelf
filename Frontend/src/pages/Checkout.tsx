@@ -37,11 +37,11 @@ export const Checkout = () => {
 
   useEffect(() => {
     if (paymentMethod === "card" && items.length > 0) {
-      craetePaymentIntent();
+      createPaymentIntent();
     }
-  }, [paymentMethod, items.length]);
+  }, [paymentMethod, items]);
 
-  const craetePaymentIntent = async () => {
+  const createPaymentIntent = async () => {
     try {
       const response = await axios.post(
         "http://localhost:5000/api/v1/create-payment-intent",
@@ -129,7 +129,7 @@ export const Checkout = () => {
       clientSecret,
       appearance,
     }),
-    [clientSecret]
+    [clientSecret, appearance]
   );
 
   if (!items || items.length === 0) {
@@ -264,7 +264,7 @@ export const Checkout = () => {
                     {item.productId?.itemName} x {item.quantity}
                   </span>
                   <span>
-                    ${(item.productId?.itemPrice * item.quantity).toFixed(2)}
+                    ${(item.priceAtTimeOfAdding * item.quantity).toFixed(2)}
                   </span>
                 </div>
               ))}
