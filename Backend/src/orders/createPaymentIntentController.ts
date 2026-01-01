@@ -31,7 +31,7 @@ export const createPaymentIntentController = async (
     for (const item of cart.items) {
       const product = item.productId as any;
       if (!product && !product.itemPrice) {
-        totalAmount += product.itemPrice;
+        totalAmount += product.itemPrice * item.quantity;
       }
     }
 
