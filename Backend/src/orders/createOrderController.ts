@@ -2,10 +2,9 @@ import { Request, Response } from "express";
 import Order from "../models/Order";
 import Item from "../models/Item";
 import mongoose from "mongoose";
-import { validateHeaderName } from "http";
+
 import Cart from "../models/Cart";
 import Stripe from "stripe";
-import { Transaction } from "mongodb";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-12-15.clover",
