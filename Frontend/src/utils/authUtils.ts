@@ -9,7 +9,6 @@ export const checkAuth = async (dispatch: Dispatch): Promise<void> => {
     const response = await axios.get(`${BACKEND_URL}/api/v1/me`, {
       withCredentials: true,
     });
-    // Debug log removed for production
 
     if (response && response.data && response.data.success) {
       dispatch(
