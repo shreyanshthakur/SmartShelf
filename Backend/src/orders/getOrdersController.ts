@@ -22,7 +22,9 @@ export const getOrdersController = async (req: Request, res: Response) => {
       query.status = status;
     }
 
-    const orders = await Order.find(query).sort({ createdAt: -1 });
+    const orders = await Order.find(query)
+      .sort({ createdAt: -1 })
+      .populate("orderItems.productId");
     if (!orders || orders.length === 0) {
       return res.status(404).json({
         message: status
