@@ -16,7 +16,11 @@ export const getOrderByIdController = async (req: Request, res: Response) => {
     const orders = await Order.findById(id);
 
     if (!orders) {
-      res.status(404).json({ message: "No orders found" });
+      return res.status(404).json({ message: "No orders found" });
+    }
+
+    if (String(orders.userId) !== String(userId)) {
+      return res.status(403).json({ message: "Forbidden" });
     }
 
     res.status(200).json({
