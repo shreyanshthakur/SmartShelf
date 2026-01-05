@@ -33,8 +33,8 @@ function App() {
             path="/itemDescriptionPage"
             element={<ItemDescriptionPage />}
           />
-          <Route path="checkout" element={<Checkout />} />
-          <Route path="orders" element={<Orders />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/orders" element={<Orders />} />
         </Routes>
       </main>
       <Footer />

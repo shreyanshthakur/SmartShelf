@@ -47,8 +47,8 @@ export const fetchOrders = createAsyncThunk(
   async (status: string | undefined, { rejectWithValue }) => {
     try {
       const url = status
-        ? `http://localhost:5000/api/v1/orders/get-orders?status=${status}`
-        : "http://localhost:5000/api/v1/orders/get-orders";
+        ? `http://localhost:5000/api/v1/get-orders?status=${status}`
+        : "http://localhost:5000/api/v1/get-orders";
 
       const response = await axios.get(url, {
         withCredentials: true,
