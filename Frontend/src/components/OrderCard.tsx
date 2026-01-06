@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import type { Order } from "../features/orderSlice";
 
 interface OrderCardProps {
@@ -79,11 +80,19 @@ export const OrderCard = ({ order }: OrderCardProps) => {
           <span className="font-medium">{totalItems}</span> item
           {totalItems !== 1 ? "s" : ""}
         </div>
-        <div className="text-right">
-          <p className="text-sm text-gray-500">Total Amount</p>
-          <p className="text-xl font-bold text-indigo-600">
-            ${order.totalAmount.toFixed(2)}
-          </p>
+        <div className="flex items-center gap-4">
+          <div className="text-right">
+            <p className="text-sm text-gray-500">Total Amount</p>
+            <p className="text-xl font-bold text-indigo-600">
+              ${order.totalAmount.toFixed(2)}
+            </p>
+          </div>
+          <Link
+            to={`/order-details?orderId=${order._id}`}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition"
+          >
+            View Details
+          </Link>
         </div>
       </div>
     </div>

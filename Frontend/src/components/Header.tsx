@@ -104,17 +104,37 @@ const Header: React.FC<HeaderProps> = () => {
           {/* You'll likely want to conditionally render a mobile navigation menu here */}
         </div>
 
-        <Link
-          to="/cart"
-          className="text-xl bg-blue-500 hover:bg-blue-700 text-white py-2 rounded-xl p-2"
-        >
-          Cart:
-          {cartItemCount > 0 && (
-            <span className="ml-2 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-              {cartItemCount}
-            </span>
+        {/* Cart and Orders Section */}
+        <div className="flex items-center gap-3">
+          {/* My Orders Link - Only visible when logged in */}
+          {isLoggedIn && (
+            <NavLink
+              to="/orders"
+              className={({ isActive }) =>
+                `px-4 py-2 rounded-lg font-medium transition duration-300 ${
+                  isActive
+                    ? "bg-blue-500 text-white"
+                    : "bg-blue-700 hover:bg-blue-500 text-white"
+                }`
+              }
+            >
+              📦 My Orders
+            </NavLink>
           )}
-        </Link>
+
+          {/* Cart */}
+          <Link
+            to="/cart"
+            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded-xl transition duration-300"
+          >
+            <span>🛒 Cart</span>
+            {cartItemCount > 0 && (
+              <span className="bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                {cartItemCount}
+              </span>
+            )}
+          </Link>
+        </div>
 
         {/* Profile Section */}
         <div className="hidden md:flex items-center space-x-4">
