@@ -11,6 +11,7 @@ import { ItemDescriptionPage } from "./pages/ItemDescriptionPage";
 import { checkAuth } from "./utils/authUtils";
 import { Checkout } from "./pages/Checkout";
 import { Orders } from "./pages/Orders";
+import { OrderDetails } from "./pages/OrderDetails";
 
 function App() {
   const dispatch = useDispatch();
@@ -35,6 +36,7 @@ function App() {
           />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/order-details" element={<OrderDetails />} />
         </Routes>
       </main>
       <Footer />
