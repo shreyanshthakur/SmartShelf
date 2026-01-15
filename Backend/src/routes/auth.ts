@@ -5,6 +5,7 @@ import { authenticateToken } from "../middleware/authenticateToken";
 import { changePasswordController } from "../auth/changePasswordController";
 import { logoutController } from "../auth/logoutController";
 import { getCurrentUserController } from "../auth/getCurrentUserController";
+import { getUserProfileController } from "../auth/getUserProfileController";
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.post("/login", loginController);
 router.post("/change-password", authenticateToken, changePasswordController);
 router.post("/logout", authenticateToken, logoutController);
 router.get("/me", authenticateToken, getCurrentUserController);
+router.get("/profile", authenticateToken, getUserProfileController);
 
 export default router;
