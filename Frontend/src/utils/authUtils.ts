@@ -17,7 +17,7 @@ export const checkAuth = async (dispatch: Dispatch): Promise<void> => {
           firstName: response.data.user.firstName,
           lastName: response.data.user.lastName,
           email: response.data.user.email,
-        })
+        }),
       );
     } else {
       dispatch(setUser(null));
@@ -45,5 +45,17 @@ export const logoutUser = async (dispatch: Dispatch): Promise<boolean> => {
     console.error("Error logging out", err);
     dispatch(setUser(null));
     return false;
+  }
+};
+
+export const getUserProfile = async () => {
+  try {
+    const response = await axios.get(`${BACKEND_URL}/api/v1/profile`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    throw error;
   }
 };
