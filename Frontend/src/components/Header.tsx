@@ -10,7 +10,7 @@ interface HeaderProps {}
 
 const Header: React.FC<HeaderProps> = () => {
   const cartItemCount = useSelector(
-    (state: RootState) => state.cart.totalItems
+    (state: RootState) => state.cart.totalItems,
   );
   const user = useSelector((state: RootState) => state.user);
   const isLoggedIn = user.userId !== null;
@@ -27,6 +27,10 @@ const Header: React.FC<HeaderProps> = () => {
     } catch (err) {
       console.error("Error logging out", err);
     }
+  };
+
+  const handleUserNameClick = () => {
+    navigate("/profile");
   };
 
   return (
@@ -144,9 +148,12 @@ const Header: React.FC<HeaderProps> = () => {
                 👤
               </div>
 
-              <span className="text-sm font-semibold mr-20">
+              <button
+                onClick={handleUserNameClick}
+                className="text-sm font-semibold mr-20 cursor-pointer"
+              >
                 {user.firstName || "Loading..."}
-              </span>
+              </button>
               <button
                 onClick={() => handleLogout()}
                 className="bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-full text-sm"
