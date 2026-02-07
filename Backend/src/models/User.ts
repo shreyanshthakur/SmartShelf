@@ -23,7 +23,7 @@ export interface IUser extends Document {
       newsLetter: boolean;
       notificatoins: boolean;
       currency: string;
-      theeme: "light" | "dark";
+      theme: "light" | "dark";
     };
   };
 
@@ -217,7 +217,7 @@ const UserSchema = new Schema<IUser>(
         return ret;
       },
     },
-  }
+  },
 );
 
 UserSchema.pre<IUser>("save", async function () {
@@ -227,7 +227,7 @@ UserSchema.pre<IUser>("save", async function () {
 });
 
 UserSchema.methods.comparePassword = async function (
-  plainPassword: string
+  plainPassword: string,
 ): Promise<boolean> {
   return await verifyPassword(plainPassword, this.password);
 };
