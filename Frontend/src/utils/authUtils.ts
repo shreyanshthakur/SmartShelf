@@ -59,3 +59,34 @@ export const getUserProfile = async () => {
     throw error;
   }
 };
+
+export const updateUserProfile = async (payload: {
+  firstName?: string;
+  lastName?: string;
+  profile?: {
+    phone?: string;
+    dateOfBirth?: string;
+    gender?: string;
+    address?: {
+      street?: string;
+      city?: string;
+      state?: string;
+      zipCode?: string;
+      country?: string;
+    };
+  };
+}) => {
+  try {
+    const response = await axios.put(
+      `${BACKEND_URL}/api/v1/update-profile`,
+      payload,
+      {
+        withCredentials: true,
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    throw error;
+  }
+};

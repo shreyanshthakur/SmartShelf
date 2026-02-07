@@ -12,7 +12,7 @@ export const updateUserProfileController = async (
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const user = await User.findById({ userId });
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "Unauthorized" });
     }
