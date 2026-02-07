@@ -6,6 +6,7 @@ import { changePasswordController } from "../auth/changePasswordController";
 import { logoutController } from "../auth/logoutController";
 import { getCurrentUserController } from "../auth/getCurrentUserController";
 import { getUserProfileController } from "../auth/getUserProfileController";
+import { updateUserProfileController } from "../auth/updateUserProfileController";
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.post("/change-password", authenticateToken, changePasswordController);
 router.post("/logout", authenticateToken, logoutController);
 router.get("/me", authenticateToken, getCurrentUserController);
 router.get("/profile", authenticateToken, getUserProfileController);
+router.put("/update-profile", authenticateToken, updateUserProfileController);
 
 export default router;
