@@ -3,11 +3,13 @@ import { Request, Response } from "express";
 
 export const getItemsController = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
-  // this route should return all the items in the database
   try {
-    const items = await Item.find();
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+    const items = await Item.find().skip(skip).limit(limit);
     if (!items) {
       res.status(404).json({ error: "Item not found" });
       return;
