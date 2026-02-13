@@ -29,11 +29,11 @@ const sampleItems = [
     lowStockThreshold: 10,
     sku: "ELEC-AUD-HP001",
     tags: ["wireless", "bluetooth", "headphones", "audio", "noise-canceling"],
-    itemDisplayImage: "https://picsum.photos/seed/headphones1/800/800.jpg",
+    itemDisplayImage: "https://picsum.photos/seed/headphones-main/800/800.jpg",
     itemImages: [
-      "https://picsum.photos/seed/headphones1/800/800.jpg",
-      "https://picsum.photos/seed/headphones2/800/800.jpg",
-      "https://picsum.photos/seed/headphones3/800/800.jpg",
+      "https://picsum.photos/seed/headphones-main/800/800.jpg",
+      "https://picsum.photos/seed/headphones-side/800/800.jpg",
+      "https://picsum.photos/seed/headphones-detail/800/800.jpg",
     ],
     weight: 0.5,
     dimensions: { length: 7, width: 6, height: 3, unit: "in" },
@@ -55,10 +55,10 @@ const sampleItems = [
     lowStockThreshold: 5,
     sku: "ELEC-TV-55001",
     tags: ["tv", "4k", "smart tv", "hdr", "entertainment"],
-    itemDisplayImage: "https://picsum.photos/seed/tv55inch1/800/800.jpg",
+    itemDisplayImage: "https://picsum.photos/seed/smart-tv-front/800/800.jpg",
     itemImages: [
-      "https://picsum.photos/seed/tv55inch1/800/800.jpg",
-      "https://picsum.photos/seed/tv55inch2/800/800.jpg",
+      "https://picsum.photos/seed/smart-tv-front/800/800.jpg",
+      "https://picsum.photos/seed/smart-tv-display/800/800.jpg",
     ],
     weight: 35,
     dimensions: { length: 49, width: 3, height: 28, unit: "in" },
@@ -80,10 +80,10 @@ const sampleItems = [
     lowStockThreshold: 15,
     sku: "ELEC-GAM-KB001",
     tags: ["keyboard", "gaming", "mechanical", "rgb", "cherry mx"],
-    itemDisplayImage: "https://picsum.photos/seed/keyboard1/800/800.jpg",
+    itemDisplayImage: "https://picsum.photos/seed/gaming-keyboard/800/800.jpg",
     itemImages: [
-      "https://picsum.photos/seed/keyboard1/800/800.jpg",
-      "https://picsum.photos/seed/keyboard2/800/800.jpg",
+      "https://picsum.photos/seed/gaming-keyboard/800/800.jpg",
+      "https://picsum.photos/seed/keyboard-rgb/800/800.jpg",
     ],
     weight: 2.2,
     dimensions: { length: 17, width: 5, height: 1.5, unit: "in" },
@@ -107,10 +107,10 @@ const sampleItems = [
     lowStockThreshold: 10,
     sku: "HOME-APP-CM001",
     tags: ["coffee maker", "kitchen", "appliance", "programmable"],
-    itemDisplayImage: "https://picsum.photos/seed/coffeemaker1/800/800.jpg",
+    itemDisplayImage: "https://picsum.photos/seed/coffee-maker/800/800.jpg",
     itemImages: [
-      "https://picsum.photos/seed/coffeemaker1/800/800.jpg",
-      "https://picsum.photos/seed/coffeemaker2/800/800.jpg",
+      "https://picsum.photos/seed/coffee-maker/800/800.jpg",
+      "https://picsum.photos/seed/coffee-machine/800/800.jpg",
     ],
     weight: 4.5,
     dimensions: { length: 8, width: 9, height: 13, unit: "in" },
@@ -132,10 +132,10 @@ const sampleItems = [
     lowStockThreshold: 8,
     sku: "HOME-CKW-SET001",
     tags: ["cookware", "non-stick", "kitchen", "pots", "pans"],
-    itemDisplayImage: "https://picsum.photos/seed/cookware1/800/800.jpg",
+    itemDisplayImage: "https://picsum.photos/seed/cookware-set/800/800.jpg",
     itemImages: [
-      "https://picsum.photos/seed/cookware1/800/800.jpg",
-      "https://picsum.photos/seed/cookware2/800/800.jpg",
+      "https://picsum.photos/seed/cookware-set/800/800.jpg",
+      "https://picsum.photos/seed/pots-pans/800/800.jpg",
     ],
     weight: 12,
     dimensions: { length: 18, width: 12, height: 10, unit: "in" },
@@ -159,10 +159,10 @@ const sampleItems = [
     lowStockThreshold: 8,
     sku: "FASH-MEN-JK001",
     tags: ["leather", "jacket", "men", "fashion", "outerwear"],
-    itemDisplayImage: "https://picsum.photos/seed/leatherjacket1/800/800.jpg",
+    itemDisplayImage: "https://picsum.photos/seed/leather-jacket/800/800.jpg",
     itemImages: [
-      "https://picsum.photos/seed/leatherjacket1/800/800.jpg",
-      "https://picsum.photos/seed/leatherjacket2/800/800.jpg",
+      "https://picsum.photos/seed/leather-jacket/800/800.jpg",
+      "https://picsum.photos/seed/mens-jacket/800/800.jpg",
     ],
     weight: 2.5,
     dimensions: { length: 26, width: 22, height: 2, unit: "in" },
@@ -184,10 +184,10 @@ const sampleItems = [
     lowStockThreshold: 20,
     sku: "FASH-SHO-RUN001",
     tags: ["shoes", "running", "women", "athletic", "sports"],
-    itemDisplayImage: "https://picsum.photos/seed/runningshoes1/800/800.jpg",
+    itemDisplayImage: "https://picsum.photos/seed/running-shoes/800/800.jpg",
     itemImages: [
-      "https://picsum.photos/seed/runningshoes1/800/800.jpg",
-      "https://picsum.photos/seed/runningshoes2/800/800.jpg",
+      "https://picsum.photos/seed/running-shoes/800/800.jpg",
+      "https://picsum.photos/seed/athletic-shoes/800/800.jpg",
     ],
     weight: 1.2,
     dimensions: { length: 11, width: 4, height: 5, unit: "in" },
@@ -211,10 +211,10 @@ const sampleItems = [
     lowStockThreshold: 25,
     sku: "BOOK-TEC-PRG001",
     tags: ["books", "programming", "education", "technology", "learning"],
-    itemDisplayImage: "https://picsum.photos/seed/programmingbook1/800/800.jpg",
+    itemDisplayImage: "https://picsum.photos/seed/programming-book/800/800.jpg",
     itemImages: [
-      "https://picsum.photos/seed/programmingbook1/800/800.jpg",
-      "https://picsum.photos/seed/programmingbook2/800/800.jpg",
+      "https://picsum.photos/seed/programming-book/800/800.jpg",
+      "https://picsum.photos/seed/tech-book/800/800.jpg",
     ],
     weight: 2,
     dimensions: { length: 9, width: 6, height: 1.5, unit: "in" },
@@ -238,10 +238,10 @@ const sampleItems = [
     lowStockThreshold: 15,
     sku: "SPRT-FIT-YM001",
     tags: ["yoga", "mat", "fitness", "exercise", "eco-friendly"],
-    itemDisplayImage: "https://picsum.photos/seed/yogamat1/800/800.jpg",
+    itemDisplayImage: "https://picsum.photos/seed/yoga-mat/800/800.jpg",
     itemImages: [
-      "https://picsum.photos/seed/yogamat1/800/800.jpg",
-      "https://picsum.photos/seed/yogamat2/800/800.jpg",
+      "https://picsum.photos/seed/yoga-mat/800/800.jpg",
+      "https://picsum.photos/seed/yoga-equipment/800/800.jpg",
     ],
     weight: 2.5,
     dimensions: { length: 72, width: 24, height: 0.25, unit: "in" },
@@ -263,10 +263,10 @@ const sampleItems = [
     lowStockThreshold: 5,
     sku: "SPRT-CMP-TNT001",
     tags: ["tent", "camping", "outdoor", "waterproof", "family"],
-    itemDisplayImage: "https://picsum.photos/seed/campingtent1/800/800.jpg",
+    itemDisplayImage: "https://picsum.photos/seed/camping-tent/800/800.jpg",
     itemImages: [
-      "https://picsum.photos/seed/campingtent1/800/800.jpg",
-      "https://picsum.photos/seed/campingtent2/800/800.jpg",
+      "https://picsum.photos/seed/camping-tent/800/800.jpg",
+      "https://picsum.photos/seed/outdoor-tent/800/800.jpg",
     ],
     weight: 12,
     dimensions: { length: 24, width: 8, height: 8, unit: "in" },
@@ -290,10 +290,10 @@ const sampleItems = [
     lowStockThreshold: 20,
     sku: "TOYS-EDU-BLK001",
     tags: ["toys", "stem", "educational", "building blocks", "kids"],
-    itemDisplayImage: "https://picsum.photos/seed/buildingblocks1/800/800.jpg",
+    itemDisplayImage: "https://picsum.photos/seed/building-blocks/800/800.jpg",
     itemImages: [
-      "https://picsum.photos/seed/buildingblocks1/800/800.jpg",
-      "https://picsum.photos/seed/buildingblocks2/800/800.jpg",
+      "https://picsum.photos/seed/building-blocks/800/800.jpg",
+      "https://picsum.photos/seed/stem-toys/800/800.jpg",
     ],
     weight: 3,
     dimensions: { length: 15, width: 12, height: 8, unit: "in" },
@@ -317,10 +317,10 @@ const sampleItems = [
     lowStockThreshold: 12,
     sku: "BEAU-SKN-SET001",
     tags: ["skincare", "beauty", "gift set", "natural", "moisturizer"],
-    itemDisplayImage: "https://picsum.photos/seed/skincareset1/800/800.jpg",
+    itemDisplayImage: "https://picsum.photos/seed/skincare-set/800/800.jpg",
     itemImages: [
-      "https://picsum.photos/seed/skincareset1/800/800.jpg",
-      "https://picsum.photos/seed/skincareset2/800/800.jpg",
+      "https://picsum.photos/seed/skincare-set/800/800.jpg",
+      "https://picsum.photos/seed/beauty-products/800/800.jpg",
     ],
     weight: 1.5,
     dimensions: { length: 10, width: 8, height: 4, unit: "in" },
@@ -328,6 +328,82 @@ const sampleItems = [
     isActive: true,
   },
 ];
+
+// Function to generate bulk items for pagination testing
+function generateBulkItems(baseItems: any[], multiplier: number = 10) {
+  const bulkItems: any[] = [];
+  const colors = [
+    "Black",
+    "White",
+    "Blue",
+    "Red",
+    "Green",
+    "Gray",
+    "Silver",
+    "Gold",
+  ];
+  const sizes = ["Small", "Medium", "Large", "XL", "XXL"];
+  const models = [
+    "Pro",
+    "Plus",
+    "Max",
+    "Ultra",
+    "Premium",
+    "Standard",
+    "Lite",
+    "Essential",
+  ];
+  const years = ["2024", "2025", "2026"];
+
+  baseItems.forEach((baseItem) => {
+    // Add the original item
+    bulkItems.push({ ...baseItem });
+
+    // Generate variations
+    for (let i = 1; i < multiplier; i++) {
+      const variation: any = { ...baseItem };
+
+      // Vary the name
+      const modifier =
+        i <= colors.length
+          ? colors[i - 1]
+          : i <= colors.length + sizes.length
+            ? sizes[i - colors.length - 1]
+            : i <= colors.length + sizes.length + models.length
+              ? models[i - colors.length - sizes.length - 1]
+              : `Model ${i}`;
+
+      variation.itemName = `${baseItem.itemName} - ${modifier}`;
+
+      // Vary the price slightly (±20%)
+      const priceVariation = 1 + (Math.random() * 0.4 - 0.2);
+      variation.itemPrice =
+        Math.round(baseItem.itemPrice * priceVariation * 100) / 100;
+
+      // Adjust compareAtPrice accordingly
+      if (variation.compareAtPrice) {
+        variation.compareAtPrice =
+          Math.round(variation.itemPrice * 1.3 * 100) / 100;
+      }
+
+      // Vary stock
+      variation.itemStock = Math.floor(Math.random() * 100) + 10;
+
+      // Vary SKU
+      variation.sku = `${baseItem.sku}-V${i}`;
+
+      // Randomly set featured status (20% chance)
+      variation.isFeatured = Math.random() < 0.2;
+
+      // Add slight description variation
+      variation.shortDescription = `${baseItem.shortDescription} - ${modifier} variant`;
+
+      bulkItems.push(variation);
+    }
+  });
+
+  return bulkItems;
+}
 
 async function seedItems() {
   try {
@@ -350,14 +426,23 @@ async function seedItems() {
     const deleteResult = await Item.deleteMany({});
     console.log(`Deleted ${deleteResult.deletedCount} existing items`);
 
+    // Generate bulk items (change multiplier to create more/fewer items)
+    // multiplier = 10 means each base item will have 10 variations (total: 12 * 10 = 120 items)
+    const multiplier = 10; // Adjust this number for more/fewer items
+    console.log(
+      `Generating ${sampleItems.length * multiplier} items (${multiplier} variations per base item)...`,
+    );
+    const bulkItems = generateBulkItems(sampleItems, multiplier);
+
     // Add creator ID to all items
-    const itemsToInsert = sampleItems.map((item) => ({
+    const itemsToInsert = bulkItems.map((item) => ({
       ...item,
       createdBy: creatorId,
     }));
 
-    // Insert all items
-    const result = await Item.insertMany(itemsToInsert);
+    // Insert all items using create() to trigger pre-save hooks for slug generation
+    console.log("Creating items in database...");
+    const result = await Item.create(itemsToInsert);
     console.log(`\n✅ Successfully created ${result.length} items!`);
 
     // Display summary
