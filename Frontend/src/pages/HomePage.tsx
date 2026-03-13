@@ -21,7 +21,7 @@ function HomePage() {
     const fetchItems = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/v1/items");
-        setItems(res.data);
+        setItems(res.data.data.items);
         setLoading(false);
       } catch (err) {
         console.error(err);
