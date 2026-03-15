@@ -51,4 +51,44 @@ describe("get items controller", () => {
       },
     });
   });
+
+  test("should return error when page is not valid number", async () => {
+    mockRequest.query = {
+      page: "abc",
+    };
+
+    await getItemsController(mockRequest as Request, mockResponse as Response);
+    expect(statusMock).toHaveBeenCalledWith(400);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Page must be a valid number",
+    });
+  });
+
+  test("should return 400 when limit is not valid", async () => {
+    mockRequest.query = {
+      limit: "abc",
+    };
+
+    await getItemsController(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(400);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Limit must be a valid number",
+    });
+  });
+
+  test("should return 400 when page is less than 1", async () => {
+    mockRequest.query = {
+      page: "0",
+    };
+    await getItemsController(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(400);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "Page must be at least 1",
+    });
+  });
 });
