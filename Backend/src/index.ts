@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import connectDB from "./connectDB";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./config/swagger";
 
 import authRoutes from "./routes/auth";
 import itemRoutes from "./routes/items";
@@ -22,7 +24,7 @@ app.use(
     credentials: true, // Allow cookies to be sent
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 app.use(express.json());
@@ -38,6 +40,8 @@ try {
 } catch {
   console.log("Error connecting to database");
 }
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // API Routes
 app.use("/api/v1/", authRoutes);
