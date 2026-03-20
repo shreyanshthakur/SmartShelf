@@ -16,22 +16,65 @@ function HomePage() {
   const [items, setItems] = useState<ItemType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // Fetch all items list to populate on HomePage
+
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/v1/items");
-        setItems(res.data.data.items);
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to fetch items.");
+        if (isFetchingMore || !hasMore) return;
+        if (page === 1) {
+          setLoading(true);
+        } else {
+          setIsFetchingMore(true);
+        }
+
+        const limit = 10;
+        const res = await axios.get(
+          `http://localhost:5000/api/v1/items?page=${page}&limit=${limit}`,
+        );
+        const newItems = res.data.data.items;
+        const paginationData = res.data.pagination;
+
+        if (page === 1) {
+          setItems(newItems);
+        } else {
+          setItems((prevItems) => [...prevItems, ...newItems]);
+        }
+
+        setHasMore(paginationData.hasMore);
+      } catch (error) {
+        console.error(error);
+        setError("Failed ot fetch items.");
       } finally {
         setLoading(false);
+        setIsFetchingMore(false);
       }
     };
     fetchItems();
-  }, []);
+  }, [page]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+
+      // If user is 300px from bottom
+      const nearBottom = scrollTop + windowHeight >= docHeight - 300;
+
+      if (nearBottom && hasMore && !isFetchingMore && !loading) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    // Cleanup remove listener when component unmounts
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [hasMore, isFetchingMore, loading]);
 
   return (
     <div>
@@ -63,6 +106,16 @@ function HomePage() {
                     />
                   </Link>
                 ))
+              )}
+              {isFetchingMore && (
+                <div className="col-span-full text-center py-8">
+                  <p className="text-gray-600">Loading more items...</p>
+                </div>
+              )}
+              {!hasMore && items.length > 0 && !loading && (
+                <div className="col-span-full text-center py-8">
+                  <p className="text-gray-500">You've reached the end!</p>
+                </div>
               )}
             </div>
           </div>
