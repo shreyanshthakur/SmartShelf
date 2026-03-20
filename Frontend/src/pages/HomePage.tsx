@@ -42,10 +42,7 @@ function HomePage() {
           <input className="h-8 border border-gray-700 rounded min-w-lg"></input>
           <div className="ml-2">Filter</div>
         </div>
-        <div className="text-center shadow-md rounded-lg px-8 pt-6 pb-8 w-full max-w-full h-50">
-          sliding images banner
-        </div>
-        <div className="text-center shadow-md rounded-lg px-8 pt-6 pb-8 w-full max-w-full min-h-screen h-50">
+        <div className="text-center shadow-md rounded-lg px-8 pt-6 pb-8 w-full max-w-full">
           <div className="w-full flex justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-4 w-full">
               {loading ? (
@@ -71,8 +68,6 @@ function HomePage() {
           </div>
         </div>
       </div>
-      {/* Add a spacer to push content above the footer */}
-      <div className="flex-1" />
     </div>
   );
 }
