@@ -1,6 +1,64 @@
 import Item from "../models/Item";
 import { Request, Response } from "express";
 
+/**
+ * @swagger
+ * /api/v1/items:
+ *  get:
+ *    summary: Get paginated list of items
+ *    description: Retrieve items with pagination support
+ *    tags: [Items]
+ *    parameters:
+ *      - in: query
+ *        name: page
+ *        schema:
+ *          type: integer
+ *          default: 1
+ *          minimum: 1
+ *        description: Page number
+ *      - in: query
+ *        name: limit
+ *        schema:
+ *          type: integer
+ *          default: 25
+ *          minimum: 10
+ *          maximum: 100
+ *        description: Items per page (10 - 100)
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                success:
+ *                  type: boolean
+ *                  example: true
+ *                data:
+ *                  type: object
+ *                  properties:
+ *                    items:
+ *                      type: array
+ *                      items:
+ *                        type: object
+ *                pagination:
+ *                  type: object
+ *                  properties:
+ *                    currentPage:
+ *                      type: integer
+ *                    totalPages:
+ *                      type: integer
+ *                    totalItems:
+ *                      type: integer
+ *                    hasMore:
+ *                      type: boolean
+ *      400:
+ *        description: Invalid parameters
+ *      500:
+ *        description: Server error
+ *
+ */
 export const getItemsController = async (
   req: Request,
   res: Response,
