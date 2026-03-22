@@ -57,23 +57,36 @@ function HomePage() {
   }, [page]);
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout | null = null;
+
     const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const docHeight = document.documentElement.scrollHeight;
-
-      // If user is 300px from bottom
-      const nearBottom = scrollTop + windowHeight >= docHeight - 300;
-
-      if (nearBottom && hasMore && !isFetchingMore && !loading) {
-        setPage((prevPage) => prevPage + 1);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
       }
+
+      timeoutId = setTimeout(() => {
+        const scrollTop = window.scrollY;
+        const windowHeight = window.innerHeight;
+        const docHeight = document.documentElement.scrollHeight;
+
+        // If user is 300px from bottom
+        const nearBottom = scrollTop + windowHeight >= docHeight - 300;
+
+        if (nearBottom && hasMore && !isFetchingMore && !loading) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      }, 150);
     };
 
     window.addEventListener("scroll", handleScroll);
 
     // Cleanup remove listener when component unmounts
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, [hasMore, isFetchingMore, loading]);
 
   return (
