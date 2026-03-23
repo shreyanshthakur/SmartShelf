@@ -16,22 +16,78 @@ function HomePage() {
   const [items, setItems] = useState<ItemType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // Fetch all items list to populate on HomePage
+
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/v1/items");
-        setItems(res.data.data.items);
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to fetch items.");
+        if (isFetchingMore || !hasMore) return;
+        if (page === 1) {
+          setLoading(true);
+        } else {
+          setIsFetchingMore(true);
+        }
+
+        const limit = 10;
+        const res = await axios.get(
+          `http://localhost:5000/api/v1/items?page=${page}&limit=${limit}`,
+        );
+        const newItems = res.data.data.items;
+        const paginationData = res.data.pagination;
+
+        if (page === 1) {
+          setItems(newItems);
+        } else {
+          setItems((prevItems) => [...prevItems, ...newItems]);
+        }
+
+        setHasMore(paginationData.hasMore);
+      } catch (error) {
+        console.error(error);
+        setError("Failed ot fetch items.");
       } finally {
         setLoading(false);
+        setIsFetchingMore(false);
       }
     };
     fetchItems();
-  }, []);
+  }, [page]);
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | null = null;
+
+    const handleScroll = () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
+      timeoutId = setTimeout(() => {
+        const scrollTop = window.scrollY;
+        const windowHeight = window.innerHeight;
+        const docHeight = document.documentElement.scrollHeight;
+
+        // If user is 300px from bottom
+        const nearBottom = scrollTop + windowHeight >= docHeight - 300;
+
+        if (nearBottom && hasMore && !isFetchingMore && !loading) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      }, 150);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    // Cleanup remove listener when component unmounts
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [hasMore, isFetchingMore, loading]);
 
   return (
     <div>
@@ -42,10 +98,7 @@ function HomePage() {
           <input className="h-8 border border-gray-700 rounded min-w-lg"></input>
           <div className="ml-2">Filter</div>
         </div>
-        <div className="text-center shadow-md rounded-lg px-8 pt-6 pb-8 w-full max-w-full h-50">
-          sliding images banner
-        </div>
-        <div className="text-center shadow-md rounded-lg px-8 pt-6 pb-8 w-full max-w-full min-h-screen h-50">
+        <div className="text-center shadow-md rounded-lg px-8 pt-6 pb-8 w-full max-w-full">
           <div className="w-full flex justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-4 w-full">
               {loading ? (
@@ -67,12 +120,20 @@ function HomePage() {
                   </Link>
                 ))
               )}
+              {isFetchingMore && (
+                <div className="col-span-full text-center py-8">
+                  <p className="text-gray-600">Loading more items...</p>
+                </div>
+              )}
+              {!hasMore && items.length > 0 && !loading && (
+                <div className="col-span-full text-center py-8">
+                  <p className="text-gray-500">You've reached the end!</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
-      {/* Add a spacer to push content above the footer */}
-      <div className="flex-1" />
     </div>
   );
 }
