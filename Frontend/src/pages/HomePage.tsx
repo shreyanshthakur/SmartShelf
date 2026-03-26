@@ -3,6 +3,10 @@ import Item from "../components/Item";
 import axios from "axios";
 import { useEffect, useState, useCallback, useRef } from "react";
 import useInfiniteScroll from "../hooks/useInfiniteScroll";
+import LoadingSpinner from "../components/LoadingSpinner";
+import ItemSkeleton from "../components/ItemSkeleton";
+import ErrorMessage from "../components/ErrorMessage";
+import EmptyState from "../components/EmptyState";
 
 type ItemType = {
   _id?: string;
@@ -125,51 +129,64 @@ function HomePage() {
 
   return (
     <div>
-      <div className="flex flex-col items-center bg-gray-100">
+      <div className="flex flex-col items-center bg-gray-100 min-h-screen">
+        {/* Search Bar */}
         <div className="flex items-center justify-center bg-gray-50 shadow-lg rounded-lg py-4 w-full max-w-full text-center">
           <div className="mr-2 items-start justify-start pr-6">🍔</div>
           <div className="mr-2">Search 🔎</div>
           <input className="h-8 border border-gray-700 rounded min-w-lg"></input>
           <div className="ml-2">Filter</div>
         </div>
-        <div className="text-center shadow-md rounded-lg px-8 pt-6 pb-8 w-full max-w-full">
+
+        {/* Main Content Area */}
+        <div className="text-center shadow-md rounded-lg px-4 md:px-8 pt-6 pb-8 w-full max-w-full">
           <div className="w-full flex justify-center">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-4 w-full">
-              {loading && page === 1 ? (
-                <div className="col-span-full text-center py-8">
-                  <p className="text-gray-600">Loading items...</p>
-                </div>
-              ) : error && items.length === 0 ? (
-                <div className="col-span-full text-center py-8">
-                  <p className="text-red-600 mb-4">{error}</p>
-                  {retryCount < MAX_RETRY_ATTEMPTS ? (
-                    <p className="text-gray-600">
-                      Retrying... (Attempt {retryCount + 1} of{" "}
-                      {MAX_RETRY_ATTEMPTS})
-                    </p>
-                  ) : (
-                    <button
-                      onClick={handleRetry}
-                      className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                    >
-                      Retry
-                    </button>
-                  )}
-                </div>
-              ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 p-2 md:p-4 w-full">
+              {/* Initial Loading State with Skeleton */}
+              {loading && page === 1 && <ItemSkeleton count={ITEMS_PER_PAGE} />}
+
+              {/* Error State (No Items Loaded) */}
+              {error && items.length === 0 && (
+                <ErrorMessage
+                  message={error}
+                  onRetry={handleRetry}
+                  retryCount={retryCount}
+                  maxRetries={MAX_RETRY_ATTEMPTS}
+                  fullPage
+                />
+              )}
+
+              {/* Empty State (No Items Found) */}
+              {!loading && !error && items.length === 0 && (
+                <EmptyState
+                  title="No Items Available"
+                  message="Check back later for new items or try refreshing the page."
+                  icon="box"
+                />
+              )}
+
+              {/* Items Grid with Smooth Transitions */}
+              {items.length > 0 && (
                 <>
                   {items.map((item, index) => (
-                    <Link
+                    <div
                       key={item._id ?? index}
-                      to={`/itemDescriptionPage?itemId=${item._id}`}
+                      className="transform transition-all duration-300 ease-in-out 
+                                 hover:scale-105 hover:shadow-xl
+                                 animate-fadeIn"
+                      style={{
+                        animationDelay: `${(index % ITEMS_PER_PAGE) * 50}ms`,
+                      }}
                     >
-                      <Item
-                        itemId={item._id || ""}
-                        itemName={item.itemName}
-                        itemPrice={item.itemPrice}
-                        itemImage={item.itemDisplayImage}
-                      />
-                    </Link>
+                      <Link to={`/itemDescriptionPage?itemId=${item._id}`}>
+                        <Item
+                          itemId={item._id || ""}
+                          itemName={item.itemName}
+                          itemPrice={item.itemPrice}
+                          itemImage={item.itemDisplayImage}
+                        />
+                      </Link>
+                    </div>
                   ))}
 
                   {/* Sentinel element for infinite scroll */}
@@ -177,31 +194,33 @@ function HomePage() {
                     <div ref={sentinelRef} className="col-span-full h-4" />
                   )}
 
-                  {/* Loading more indicator */}
+                  {/* Loading More Indicator */}
                   {isFetchingMore && (
-                    <div className="col-span-full text-center py-8">
-                      <p className="text-gray-600">Loading more items...</p>
+                    <div className="col-span-full py-8">
+                      <LoadingSpinner
+                        size="medium"
+                        text="Loading more items..."
+                      />
                     </div>
                   )}
 
-                  {/* Error during pagination load */}
+                  {/* Error During Pagination */}
                   {error && items.length > 0 && (
-                    <div className="col-span-full text-center py-8">
-                      <p className="text-red-600 mb-4">{error}</p>
-                      <button
-                        onClick={handleRetry}
-                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                      >
-                        Retry
-                      </button>
-                    </div>
+                    <ErrorMessage
+                      message={error}
+                      onRetry={handleRetry}
+                      retryCount={retryCount}
+                      maxRetries={MAX_RETRY_ATTEMPTS}
+                    />
                   )}
 
-                  {/* End of list indicator */}
-                  {!hasMore && items.length > 0 && !error && (
-                    <div className="col-span-full text-center py-8">
-                      <p className="text-gray-500">You've reached the end!</p>
-                    </div>
+                  {/* End of List Indicator */}
+                  {!hasMore && !error && (
+                    <EmptyState
+                      title="You've reached the end!"
+                      message="That's all we have for now. Check back later for more items."
+                      icon="end"
+                    />
                   )}
                 </>
               )}
