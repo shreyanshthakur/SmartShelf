@@ -1,3 +1,4 @@
+import { Query } from "mongoose";
 import Item from "../models/Item";
 import { Request, Response } from "express";
 
@@ -9,6 +10,11 @@ import { Request, Response } from "express";
  *    description: Retrieve items with pagination support
  *    tags: [Items]
  *    parameters:
+ *      - in: query
+ *        name: search
+ *        schema:
+ *          type: string
+ *        description: Search Text
  *      - in: query
  *        name: page
  *        schema:
@@ -67,9 +73,16 @@ export const getItemsController = async (
     const pageProvided = req.query.page !== undefined;
     const limitProvided = req.query.limit !== undefined;
 
+    const searchTextProvided = req.query.search !== undefined;
+
     const currentPage = pageProvided ? parseInt(req.query.page as string) : 1;
     const limit = limitProvided ? parseInt(req.query.limit as string) : 25;
-
+    const searchText = searchTextProvided ? (req.query.search as string) : "";
+    const query = searchTextProvided
+      ? {
+          $text: { $search: searchText },
+        }
+      : {};
     if (pageProvided && isNaN(currentPage)) {
       res
         .status(400)
@@ -98,10 +111,14 @@ export const getItemsController = async (
       return;
     }
     const offset = (currentPage - 1) * limit;
-    const items = await Item.find().sort({ _id: -1 }).skip(offset).limit(limit);
-    const totalItems = await Item.find().countDocuments();
+    const items = await Item.find(query)
+      .sort({ _id: -1 })
+      .skip(offset)
+      .limit(limit);
+    const totalItems = await Item.find(query).countDocuments();
     const totalPages = Math.ceil(totalItems / limit);
     const hasMore = currentPage < totalPages;
+
     res.status(200).json({
       success: true,
       data: {
