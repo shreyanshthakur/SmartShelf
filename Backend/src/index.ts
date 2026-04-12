@@ -33,13 +33,8 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-try {
-  console.log("Connecting to database");
-  connectDB();
-  console.log("Successfully Connected to database");
-} catch {
-  console.log("Error connecting to database");
-}
+console.log("Connecting to database");
+connectDB();
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
