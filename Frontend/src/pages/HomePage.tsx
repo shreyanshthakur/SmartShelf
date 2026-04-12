@@ -26,6 +26,8 @@ function HomePage() {
   const [hasMore, setHasMore] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [inputValue, setInputValue] = useState(""); // what user is typing
+  const [searchQuery, setSearchQuery] = useState(""); // committed query that triggers API
 
   // Ref to prevent duplicate API calls
   const isFetchingRef = useRef(false);
@@ -51,7 +53,7 @@ function HomePage() {
         setError(null);
 
         const res = await axios.get(
-          `http://localhost:5000/api/v1/items?page=${pageNum}&limit=${ITEMS_PER_PAGE}`,
+          `http://localhost:5000/api/v1/items?page=${pageNum}&limit=${ITEMS_PER_PAGE}${searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""}`,
         );
         const newItems = res.data.data.items;
         const paginationData = res.data.pagination;
@@ -95,7 +97,7 @@ function HomePage() {
         isFetchingRef.current = false;
       }
     },
-    [retryCount],
+    [retryCount, searchQuery],
   );
 
   // Initial fetch and fetch on page change
@@ -104,6 +106,18 @@ function HomePage() {
       fetchItems(page);
     }
   }, [page, hasMore, fetchItems]);
+
+  // Reset pagination whenever the committed searchQuery changes
+  useEffect(() => {
+    setPage(1);
+    setItems([]);
+    setHasMore(true);
+    isFetchingRef.current = false;
+  }, [searchQuery]);
+
+  const commitSearch = () => {
+    setSearchQuery(inputValue);
+  };
 
   // Load more items callback for infinite scroll
   const loadMore = useCallback(() => {
@@ -129,15 +143,45 @@ function HomePage() {
 
   return (
     <div>
-      <div className="flex flex-col items-center bg-gray-100 min-h-screen">
-        {/* Search Bar */}
-        <div className="flex items-center justify-center bg-gray-50 shadow-lg rounded-lg py-4 w-full max-w-full text-center">
-          <div className="mr-2 items-start justify-start pr-6">🍔</div>
-          <div className="mr-2">Search 🔎</div>
-          <input className="h-8 border border-gray-700 rounded min-w-lg"></input>
-          <div className="ml-2">Filter</div>
+      <div className="flex items-center justify-center bg-white shadow-lg rounded-xl py-4 px-6 w-full max-w-4xl mx-auto my-4 gap-3">
+        {/* Search icon + input */}
+        <div className="flex items-center flex-1 border border-gray-300 rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500 bg-white">
+          <span
+            className="text-gray-400 mr-2 cursor-pointer hover:text-blue-500"
+            onClick={commitSearch}
+          >
+            🔎
+          </span>
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && commitSearch()}
+            placeholder="Search for products..."
+            className="flex-1 outline-none text-gray-700 bg-transparent"
+            aria-label="Search products"
+          />
+          {inputValue && (
+            <button
+              onClick={() => {
+                setInputValue("");
+                setSearchQuery("");
+              }}
+              className="text-gray-400 hover:text-gray-600 ml-2"
+              aria-label="Clear search"
+            >
+              ✕
+            </button>
+          )}
         </div>
 
+        {/* Filter button */}
+        <button className="flex items-center gap-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100 transition">
+          <span>⚙️</span> Filter
+        </button>
+      </div>
+
+      <div className="flex flex-col items-center bg-gray-100 min-h-screen">
         {/* Main Content Area */}
         <div className="text-center shadow-md rounded-lg px-4 md:px-8 pt-6 pb-8 w-full max-w-full">
           <div className="w-full flex justify-center">

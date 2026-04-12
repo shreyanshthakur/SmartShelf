@@ -59,7 +59,7 @@ const cartSchema = new Schema<ICart>(
 
     toJSON: {
       virtuals: true,
-      transform: function (doc, ret) {
+      transform: function (doc, ret: Record<string, unknown>) {
         delete ret.__v;
         return ret;
       },
@@ -67,14 +67,14 @@ const cartSchema = new Schema<ICart>(
     toObject: {
       virtuals: true,
     },
-  }
+  },
 );
 
 // Virtual fields
 cartSchema.virtual("totalAmount").get(function () {
   return this.items.reduce(
     (sum, item) => sum + item.priceAtTimeOfAdding * item.quantity,
-    0
+    0,
   );
 });
 
