@@ -37,7 +37,7 @@ function HomePage() {
 
   // API call function to fetch paginated data
   const fetchItems = useCallback(
-    async (pageNum: number, isRetry = false) => {
+    async (pageNum: number, isRetry = false, search: string) => {
       // Prevent duplicate API calls during active loading
       if (isFetchingRef.current) return;
 
@@ -53,7 +53,7 @@ function HomePage() {
         setError(null);
 
         const res = await axios.get(
-          `http://localhost:5000/api/v1/items?page=${pageNum}&limit=${ITEMS_PER_PAGE}${searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ""}`,
+          `http://localhost:5000/api/v1/items?page=${pageNum}&limit=${ITEMS_PER_PAGE}${search ? `&search=${encodeURIComponent(search)}` : ""}`,
         );
         const newItems = res.data.data.items;
         const paginationData = res.data.pagination;
@@ -85,7 +85,7 @@ function HomePage() {
           setTimeout(
             () => {
               isFetchingRef.current = false;
-              fetchItems(pageNum, true);
+              fetchItems(pageNum, true, search);
             },
             1000 * (retryCount + 1),
           ); // Exponential backoff
@@ -97,15 +97,15 @@ function HomePage() {
         isFetchingRef.current = false;
       }
     },
-    [retryCount, searchQuery],
+    [retryCount],
   );
 
   // Initial fetch and fetch on page change
   useEffect(() => {
     if (!isFetchingRef.current && (page === 1 || hasMore)) {
-      fetchItems(page);
+      fetchItems(page, false, searchQuery);
     }
-  }, [page, hasMore, fetchItems]);
+  }, [page, hasMore, fetchItems, searchQuery]);
 
   // Reset pagination whenever the committed searchQuery changes
   useEffect(() => {
@@ -114,6 +114,14 @@ function HomePage() {
     setHasMore(true);
     isFetchingRef.current = false;
   }, [searchQuery]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchQuery(inputValue);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [inputValue]);
 
   const commitSearch = () => {
     setSearchQuery(inputValue);
@@ -138,7 +146,7 @@ function HomePage() {
   const handleRetry = () => {
     setError(null);
     setRetryCount(0);
-    fetchItems(page);
+    fetchItems(page, false, searchQuery);
   };
 
   return (
@@ -201,13 +209,22 @@ function HomePage() {
               )}
 
               {/* Empty State (No Items Found) */}
-              {!loading && !error && items.length === 0 && (
-                <EmptyState
-                  title="No Items Available"
-                  message="Check back later for new items or try refreshing the page."
-                  icon="box"
-                />
-              )}
+              {!loading &&
+                !error &&
+                items.length === 0 &&
+                (searchQuery ? (
+                  <EmptyState
+                    title="No Results Found"
+                    message={`No items match "${searchQuery}"`}
+                    icon="search"
+                  />
+                ) : (
+                  <EmptyState
+                    title="No Items Available"
+                    message="Check back later for new items or try refreshing the page."
+                    icon="box"
+                  />
+                ))}
 
               {/* Items Grid with Smooth Transitions */}
               {items.length > 0 && (
