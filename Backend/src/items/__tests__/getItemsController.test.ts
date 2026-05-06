@@ -434,4 +434,179 @@ describe("get items controller", () => {
       },
     });
   });
+
+  test("should return 400 when minPrice is invalid", async () => {
+    mockRequest.query = {
+      minPrice: "abc",
+    };
+
+    await getItemsController(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(400);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "minPrice must be a valid number",
+    });
+  });
+
+  test("should return 400 when maxPrice is invalid", async () => {
+    mockRequest.query = {
+      maxPrice: "abc",
+    };
+
+    await getItemsController(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(400);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "maxPrice must be a valid number",
+    });
+  });
+
+  test("should return 400 when minRating is out of range", async () => {
+    mockRequest.query = {
+      minRating: "6",
+    };
+
+    await getItemsController(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(400);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "minRating must be between 0 and 5",
+    });
+  });
+
+  test("should return 400 when minPrice is greater than maxPrice", async () => {
+    mockRequest.query = {
+      minPrice: "200",
+      maxPrice: "100",
+    };
+
+    await getItemsController(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(400);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "minPrice cannot be greater than maxPrice",
+    });
+  });
+
+  test("should return 400 when sortBy is invalid", async () => {
+    mockRequest.query = {
+      sortBy: "name",
+    };
+
+    await getItemsController(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(400);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "sortBy must be one of: newest, price, rating",
+    });
+  });
+
+  test("should return 400 when sortOrder is invalid", async () => {
+    mockRequest.query = {
+      sortOrder: "up",
+    };
+
+    await getItemsController(mockRequest as Request, mockResponse as Response);
+
+    expect(statusMock).toHaveBeenCalledWith(400);
+    expect(jsonMock).toHaveBeenCalledWith({
+      success: false,
+      message: "sortOrder must be one of: asc, desc",
+    });
+  });
+
+  test("should build query with category, price range, rating, and search", async () => {
+    const limitMock = (jest.fn() as any).mockResolvedValue([]);
+    const skipMock = jest.fn().mockReturnValue({
+      limit: limitMock,
+    });
+    const sortMock = jest.fn().mockReturnValue({
+      skip: skipMock,
+    });
+
+    const findMock = jest.fn().mockReturnValue({
+      sort: sortMock,
+      countDocuments: (jest.fn() as any).mockResolvedValue(10),
+    });
+
+    (Item.find as jest.Mock) = findMock;
+
+    mockRequest.query = {
+      search: "laptop",
+      category: "Electronics",
+      minPrice: "100",
+      maxPrice: "1000",
+      minRating: "4",
+      page: "1",
+      limit: "10",
+    };
+
+    await getItemsController(mockRequest as Request, mockResponse as Response);
+
+    const expectedQuery = {
+      $text: { $search: "laptop" },
+      itemCategory: "Electronics",
+      itemPrice: { $gte: 100, $lte: 1000 },
+      rating: { $gte: 4 },
+    };
+
+    expect(findMock).toHaveBeenNthCalledWith(1, expectedQuery);
+    expect(findMock).toHaveBeenNthCalledWith(2, expectedQuery);
+    expect(statusMock).toHaveBeenCalledWith(200);
+  });
+
+  test("should sort by price ascending", async () => {
+    const limitMock = (jest.fn() as any).mockResolvedValue([]);
+    const skipMock = jest.fn().mockReturnValue({
+      limit: limitMock,
+    });
+    const sortMock = jest.fn().mockReturnValue({
+      skip: skipMock,
+    });
+
+    (Item.find as jest.Mock).mockReturnValue({
+      sort: sortMock,
+      countDocuments: (jest.fn() as any).mockResolvedValue(0),
+    });
+
+    mockRequest.query = {
+      sortBy: "price",
+      sortOrder: "asc",
+    };
+
+    await getItemsController(mockRequest as Request, mockResponse as Response);
+
+    expect(sortMock).toHaveBeenCalledWith({ _id: -1, itemPrice: 1 });
+    expect(statusMock).toHaveBeenCalledWith(200);
+  });
+
+  test("should sort by rating descending", async () => {
+    const limitMock = (jest.fn() as any).mockResolvedValue([]);
+    const skipMock = jest.fn().mockReturnValue({
+      limit: limitMock,
+    });
+    const sortMock = jest.fn().mockReturnValue({
+      skip: skipMock,
+    });
+
+    (Item.find as jest.Mock).mockReturnValue({
+      sort: sortMock,
+      countDocuments: (jest.fn() as any).mockResolvedValue(0),
+    });
+
+    mockRequest.query = {
+      sortBy: "rating",
+      sortOrder: "desc",
+    };
+
+    await getItemsController(mockRequest as Request, mockResponse as Response);
+
+    expect(sortMock).toHaveBeenCalledWith({ _id: -1, rating: -1 });
+    expect(statusMock).toHaveBeenCalledWith(200);
+  });
 });
