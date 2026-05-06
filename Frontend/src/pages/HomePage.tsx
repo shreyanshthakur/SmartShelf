@@ -11,10 +11,31 @@ import EmptyState from "../components/EmptyState";
 type ItemType = {
   _id?: string;
   itemName: string;
-  itemPrice: string;
+  itemPrice: string | number;
   itemDisplayImage: string;
   itemImages: string[];
   // add other properties as needed
+};
+
+type SortBy = "newest" | "price" | "rating";
+type SortOrder = "asc" | "desc";
+
+type FilterState = {
+  category: string;
+  minPrice: string;
+  maxPrice: string;
+  minRating: string;
+  sortBy: SortBy;
+  sortOrder: SortOrder;
+};
+
+const DEFAULT_FILTERS: FilterState = {
+  category: "",
+  minPrice: "",
+  maxPrice: "",
+  minRating: "",
+  sortBy: "newest",
+  sortOrder: "desc",
 };
 
 function HomePage() {
@@ -28,6 +49,11 @@ function HomePage() {
   const [retryCount, setRetryCount] = useState(0);
   const [inputValue, setInputValue] = useState(""); // what user is typing
   const [searchQuery, setSearchQuery] = useState(""); // committed query that triggers API
+  const [showFilters, setShowFilters] = useState(false);
+  const [draftFilters, setDraftFilters] =
+    useState<FilterState>(DEFAULT_FILTERS);
+  const [appliedFilters, setAppliedFilters] =
+    useState<FilterState>(DEFAULT_FILTERS);
 
   // Ref to prevent duplicate API calls
   const isFetchingRef = useRef(false);
@@ -37,7 +63,12 @@ function HomePage() {
 
   // API call function to fetch paginated data
   const fetchItems = useCallback(
-    async (pageNum: number, isRetry = false, search: string) => {
+    async (
+      pageNum: number,
+      isRetry = false,
+      search: string,
+      filters: FilterState,
+    ) => {
       // Prevent duplicate API calls during active loading
       if (isFetchingRef.current) return;
 
@@ -52,8 +83,31 @@ function HomePage() {
 
         setError(null);
 
+        const params = new URLSearchParams({
+          page: String(pageNum),
+          limit: String(ITEMS_PER_PAGE),
+        });
+
+        if (search.trim()) {
+          params.set("search", search.trim());
+        }
+        if (filters.category.trim()) {
+          params.set("category", filters.category.trim());
+        }
+        if (filters.minPrice.trim()) {
+          params.set("minPrice", filters.minPrice.trim());
+        }
+        if (filters.maxPrice.trim()) {
+          params.set("maxPrice", filters.maxPrice.trim());
+        }
+        if (filters.minRating.trim()) {
+          params.set("minRating", filters.minRating.trim());
+        }
+        params.set("sortBy", filters.sortBy);
+        params.set("sortOrder", filters.sortOrder);
+
         const res = await axios.get(
-          `http://localhost:5000/api/v1/items?page=${pageNum}&limit=${ITEMS_PER_PAGE}${search ? `&search=${encodeURIComponent(search)}` : ""}`,
+          `http://localhost:5000/api/v1/items?${params.toString()}`,
         );
         const newItems = res.data.data.items;
         const paginationData = res.data.pagination;
@@ -85,7 +139,7 @@ function HomePage() {
           setTimeout(
             () => {
               isFetchingRef.current = false;
-              fetchItems(pageNum, true, search);
+              fetchItems(pageNum, true, search, filters);
             },
             1000 * (retryCount + 1),
           ); // Exponential backoff
@@ -103,29 +157,44 @@ function HomePage() {
   // Initial fetch and fetch on page change
   useEffect(() => {
     if (!isFetchingRef.current && (page === 1 || hasMore)) {
-      fetchItems(page, false, searchQuery);
+      fetchItems(page, false, searchQuery, appliedFilters);
     }
-  }, [page, hasMore, fetchItems, searchQuery]);
+  }, [page, hasMore, fetchItems, searchQuery, appliedFilters]);
 
-  // Reset pagination whenever the committed searchQuery changes
+  // Reset pagination whenever committed search query or applied filters change
   useEffect(() => {
     setPage(1);
     setItems([]);
     setHasMore(true);
     isFetchingRef.current = false;
-  }, [searchQuery]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setSearchQuery(inputValue);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [inputValue]);
+  }, [searchQuery, appliedFilters]);
 
   const commitSearch = () => {
     setSearchQuery(inputValue);
   };
+
+  const applyFilters = () => {
+    setAppliedFilters({
+      ...draftFilters,
+      category: draftFilters.category.trim(),
+      minPrice: draftFilters.minPrice.trim(),
+      maxPrice: draftFilters.maxPrice.trim(),
+      minRating: draftFilters.minRating.trim(),
+    });
+  };
+
+  const clearFilters = () => {
+    setDraftFilters(DEFAULT_FILTERS);
+    setAppliedFilters(DEFAULT_FILTERS);
+  };
+
+  const hasAppliedFilters =
+    Boolean(appliedFilters.category) ||
+    Boolean(appliedFilters.minPrice) ||
+    Boolean(appliedFilters.maxPrice) ||
+    Boolean(appliedFilters.minRating) ||
+    appliedFilters.sortBy !== "newest" ||
+    appliedFilters.sortOrder !== "desc";
 
   // Load more items callback for infinite scroll
   const loadMore = useCallback(() => {
@@ -146,7 +215,7 @@ function HomePage() {
   const handleRetry = () => {
     setError(null);
     setRetryCount(0);
-    fetchItems(page, false, searchQuery);
+    fetchItems(page, false, searchQuery, appliedFilters);
   };
 
   return (
@@ -184,10 +253,128 @@ function HomePage() {
         </div>
 
         {/* Filter button */}
-        <button className="flex items-center gap-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100 transition">
+        <button
+          onClick={() => setShowFilters((prev) => !prev)}
+          className="flex items-center gap-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100 transition"
+        >
           <span>⚙️</span> Filter
         </button>
       </div>
+
+      {showFilters && (
+        <div className="bg-white shadow-md rounded-xl py-4 px-6 w-full max-w-4xl mx-auto mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <input
+              type="text"
+              value={draftFilters.category}
+              onChange={(e) =>
+                setDraftFilters((prev) => ({
+                  ...prev,
+                  category: e.target.value,
+                }))
+              }
+              placeholder="Category"
+              className="border border-gray-300 rounded-lg px-3 py-2"
+              aria-label="Filter by category"
+            />
+
+            <input
+              type="number"
+              min="0"
+              value={draftFilters.minPrice}
+              onChange={(e) =>
+                setDraftFilters((prev) => ({
+                  ...prev,
+                  minPrice: e.target.value,
+                }))
+              }
+              placeholder="Min price"
+              className="border border-gray-300 rounded-lg px-3 py-2"
+              aria-label="Minimum price"
+            />
+
+            <input
+              type="number"
+              min="0"
+              value={draftFilters.maxPrice}
+              onChange={(e) =>
+                setDraftFilters((prev) => ({
+                  ...prev,
+                  maxPrice: e.target.value,
+                }))
+              }
+              placeholder="Max price"
+              className="border border-gray-300 rounded-lg px-3 py-2"
+              aria-label="Maximum price"
+            />
+
+            <select
+              value={draftFilters.minRating}
+              onChange={(e) =>
+                setDraftFilters((prev) => ({
+                  ...prev,
+                  minRating: e.target.value,
+                }))
+              }
+              className="border border-gray-300 rounded-lg px-3 py-2"
+              aria-label="Minimum rating"
+            >
+              <option value="">Any rating</option>
+              <option value="1">1+ stars</option>
+              <option value="2">2+ stars</option>
+              <option value="3">3+ stars</option>
+              <option value="4">4+ stars</option>
+              <option value="5">5 stars</option>
+            </select>
+
+            <select
+              value={draftFilters.sortBy}
+              onChange={(e) =>
+                setDraftFilters((prev) => ({
+                  ...prev,
+                  sortBy: e.target.value as SortBy,
+                }))
+              }
+              className="border border-gray-300 rounded-lg px-3 py-2"
+              aria-label="Sort by"
+            >
+              <option value="newest">Sort: Newest</option>
+              <option value="price">Sort: Price</option>
+              <option value="rating">Sort: Rating</option>
+            </select>
+
+            <select
+              value={draftFilters.sortOrder}
+              onChange={(e) =>
+                setDraftFilters((prev) => ({
+                  ...prev,
+                  sortOrder: e.target.value as SortOrder,
+                }))
+              }
+              className="border border-gray-300 rounded-lg px-3 py-2"
+              aria-label="Sort order"
+            >
+              <option value="desc">Order: Descending</option>
+              <option value="asc">Order: Ascending</option>
+            </select>
+          </div>
+
+          <div className="flex items-center justify-end gap-2 mt-4">
+            <button
+              onClick={clearFilters}
+              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
+            >
+              Clear
+            </button>
+            <button
+              onClick={applyFilters}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Apply
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-col items-center bg-gray-100 min-h-screen">
         {/* Main Content Area */}
@@ -212,10 +399,10 @@ function HomePage() {
               {!loading &&
                 !error &&
                 items.length === 0 &&
-                (searchQuery ? (
+                (searchQuery || hasAppliedFilters ? (
                   <EmptyState
                     title="No Results Found"
-                    message={`No items match "${searchQuery}"`}
+                    message="No items match your current search and filters."
                     icon="search"
                   />
                 ) : (
@@ -243,7 +430,7 @@ function HomePage() {
                         <Item
                           itemId={item._id || ""}
                           itemName={item.itemName}
-                          itemPrice={item.itemPrice}
+                          itemPrice={String(item.itemPrice)}
                           itemImage={item.itemDisplayImage}
                         />
                       </Link>

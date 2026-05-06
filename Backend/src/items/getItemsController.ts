@@ -16,6 +16,42 @@ import { Request, Response } from "express";
  *          type: string
  *        description: Search Text
  *      - in: query
+ *        name: category
+ *        schema:
+ *          type: string
+ *        description: Filter by exact item category
+ *      - in: query
+ *        name: minPrice
+ *        schema:
+ *          type: number
+ *          minimum: 0
+ *        description: Minimum item price filter
+ *      - in: query
+ *        name: maxPrice
+ *        schema:
+ *          type: number
+ *          minimum: 0
+ *        description: Maximum item price filter
+ *      - in: query
+ *        name: minRating
+ *        schema:
+ *          type: number
+ *          minimum: 0
+ *          maximum: 5
+ *        description: Minimum rating filter
+ *      - in: query
+ *        name: sortBy
+ *        schema:
+ *          type: string
+ *          enum: [newest, price, rating]
+ *        description: Sort field
+ *      - in: query
+ *        name: sortOrder
+ *        schema:
+ *          type: string
+ *          enum: [asc, desc]
+ *        description: Sort order
+ *      - in: query
  *        name: page
  *        schema:
  *          type: integer
@@ -70,19 +106,59 @@ export const getItemsController = async (
   res: Response,
 ): Promise<void> => {
   try {
+    const getQueryValue = (value: unknown): string => {
+      if (Array.isArray(value)) {
+        return String(value[0] ?? "");
+      }
+      return String(value ?? "");
+    };
+
     const pageProvided = req.query.page !== undefined;
     const limitProvided = req.query.limit !== undefined;
 
     const searchTextProvided = req.query.search !== undefined;
+    const categoryProvided = req.query.category !== undefined;
+    const minPriceProvided = req.query.minPrice !== undefined;
+    const maxPriceProvided = req.query.maxPrice !== undefined;
+    const minRatingProvided = req.query.minRating !== undefined;
+    const sortByProvided = req.query.sortBy !== undefined;
+    const sortOrderProvided = req.query.sortOrder !== undefined;
 
-    const currentPage = pageProvided ? parseInt(req.query.page as string) : 1;
-    const limit = limitProvided ? parseInt(req.query.limit as string) : 25;
-    const searchText = searchTextProvided ? (req.query.search as string) : "";
-    const query = searchTextProvided
-      ? {
-          $text: { $search: searchText },
-        }
-      : {};
+    const currentPage = pageProvided
+      ? parseInt(getQueryValue(req.query.page), 10)
+      : 1;
+    const limit = limitProvided
+      ? parseInt(getQueryValue(req.query.limit), 10)
+      : 25;
+
+    const searchText = searchTextProvided
+      ? getQueryValue(req.query.search).trim()
+      : "";
+    const category = categoryProvided
+      ? getQueryValue(req.query.category).trim()
+      : "";
+
+    const minPriceText = minPriceProvided
+      ? getQueryValue(req.query.minPrice).trim()
+      : "";
+    const maxPriceText = maxPriceProvided
+      ? getQueryValue(req.query.maxPrice).trim()
+      : "";
+    const minRatingText = minRatingProvided
+      ? getQueryValue(req.query.minRating).trim()
+      : "";
+
+    const minPrice = minPriceProvided ? Number(minPriceText) : undefined;
+    const maxPrice = maxPriceProvided ? Number(maxPriceText) : undefined;
+    const minRating = minRatingProvided ? Number(minRatingText) : undefined;
+
+    const sortBy = sortByProvided
+      ? getQueryValue(req.query.sortBy).trim().toLowerCase()
+      : "newest";
+    const sortOrder = sortOrderProvided
+      ? getQueryValue(req.query.sortOrder).trim().toLowerCase()
+      : "desc";
+
     if (pageProvided && isNaN(currentPage)) {
       res
         .status(400)
@@ -110,11 +186,131 @@ export const getItemsController = async (
       });
       return;
     }
+
+    if (minPriceProvided && (minPriceText === "" || Number.isNaN(minPrice))) {
+      res.status(400).json({
+        success: false,
+        message: "minPrice must be a valid number",
+      });
+      return;
+    }
+
+    if (maxPriceProvided && (maxPriceText === "" || Number.isNaN(maxPrice))) {
+      res.status(400).json({
+        success: false,
+        message: "maxPrice must be a valid number",
+      });
+      return;
+    }
+
+    if (
+      minRatingProvided &&
+      (minRatingText === "" || Number.isNaN(minRating))
+    ) {
+      res.status(400).json({
+        success: false,
+        message: "minRating must be a valid number",
+      });
+      return;
+    }
+
+    if (minPrice !== undefined && minPrice < 0) {
+      res.status(400).json({
+        success: false,
+        message: "minPrice cannot be negative",
+      });
+      return;
+    }
+
+    if (maxPrice !== undefined && maxPrice < 0) {
+      res.status(400).json({
+        success: false,
+        message: "maxPrice cannot be negative",
+      });
+      return;
+    }
+
+    if (
+      minPrice !== undefined &&
+      maxPrice !== undefined &&
+      minPrice > maxPrice
+    ) {
+      res.status(400).json({
+        success: false,
+        message: "minPrice cannot be greater than maxPrice",
+      });
+      return;
+    }
+
+    if (minRating !== undefined && (minRating < 0 || minRating > 5)) {
+      res.status(400).json({
+        success: false,
+        message: "minRating must be between 0 and 5",
+      });
+      return;
+    }
+
+    const allowedSortBy = new Set(["newest", "price", "rating"]);
+    const allowedSortOrder = new Set(["asc", "desc"]);
+
+    if (!allowedSortBy.has(sortBy)) {
+      res.status(400).json({
+        success: false,
+        message: "sortBy must be one of: newest, price, rating",
+      });
+      return;
+    }
+
+    if (!allowedSortOrder.has(sortOrder)) {
+      res.status(400).json({
+        success: false,
+        message: "sortOrder must be one of: asc, desc",
+      });
+      return;
+    }
+
+    const query: Record<string, unknown> = {};
+
+    if (searchText) {
+      query.$text = { $search: searchText };
+    }
+
+    if (category) {
+      query.itemCategory = category;
+    }
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      const priceFilter: Record<string, number> = {};
+      if (minPrice !== undefined) {
+        priceFilter.$gte = minPrice;
+      }
+      if (maxPrice !== undefined) {
+        priceFilter.$lte = maxPrice;
+      }
+      query.itemPrice = priceFilter;
+    }
+
+    if (minRating !== undefined) {
+      query.rating = { $gte: minRating };
+    }
+
+    const direction = sortOrder === "asc" ? 1 : -1;
+    const sort: Record<string, 1 | -1> = { _id: -1 };
+
+    if (sortBy === "price") {
+      sort.itemPrice = direction;
+    }
+
+    if (sortBy === "rating") {
+      sort.rating = direction;
+    }
+
+    if (sortBy === "newest") {
+      sort._id = direction;
+    }
+
     const offset = (currentPage - 1) * limit;
-    const items = await Item.find(query)
-      .sort({ _id: -1 })
-      .skip(offset)
-      .limit(limit);
+    const items = await Item.find(query).sort(sort).skip(offset).limit(limit);
     const totalItems = await Item.find(query).countDocuments();
     const totalPages = Math.ceil(totalItems / limit);
     const hasMore = currentPage < totalPages;
